@@ -1,0 +1,79 @@
+\documentclass[11pt,oneside]{book}
+
+% per stampare fronteretro
+%\documentclass[11pt,twoside]{book}
+
+%\captionheaderfont{\sl\bfseries}
+%\captionbodyfont{\sl}
+
+%%\renewcommand{\tableshortname}{Table}
+%%\renewcommand{\figureshortname{Figure}
+%%\chapapp{\chaptername}
+\usepackage[italian,english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{epsfig}
+\usepackage{psfig}
+\usepackage{subfig}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{latexsym}
+%\usepackage[italian]{minitoc}
+\usepackage{fancybox}
+
+\usepackage{psfig}
+\usepackage{verbatim}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{color}
+%\usepackage{concmath}
+\usepackage{moreverb}
+%HYPERREF per uso con dvi
+%\usepackage[final,backref,breaklinks,pagebackref,colorlinks]{hyperref}
+%HYPERREF per uso con con pdf (con bookmark)
+\usepackage[final,bookmarks,backref,breaklinks,dvips,colorlinks]{hyperref}
+%mypackages
+\usepackage{listings}
+\input{IsisMacro.tex}
+
+\begin{document}
+\selectlanguage{italian}
+
+\begin{titlepage}
+\begin{center}
+\begin{center}
+\includegraphics[scale=0.28, natwidth=793, natheight=1123]{Figure/logounisa.jpg}
+\end{center}
+{\Large Università degli Studi di Salerno}\\[0.2truecm]
+{\large Facoltà di Scienze Matematiche Fisiche e Naturali}\\
+\hrulefill
+\vfill
+{\large Tesi di Laurea di I livello in }\\[0.2truecm]
+{\Large Informatica}\\
+\vfill
+{\Huge Abstract}\\
+\vfill
+{\Huge Progettazione assistita di simulazioni agent-based: l'architettura di Agent Modeling Platform}\\
+\vfill\vfill
+
+
+\ \ \ \ \ \ \ {\bf Relatore} \hfill {\bf Candidato}\ \ \\
+Prof. Vittorio Scarano \hfill Francesco Farina\\
+\hfill Matricola 0512100694
+
+\vfill
+\hrulefill 
+
+Anno Accademico 2012-2013
+
+\end{center}
+\end{titlepage}
+
+\chapter*{Abstract}
+Lo studio dei sistemi multiagente (ABM) ha acquisito grande attenzione nell'ultimo decennio ed è diventato uno strumento sempre più diffuso in molti ambiti di ricerca come biologia, economia, ecologia, scienze sociali.\\
+I sistemi multiagente nascono dalla necessità di rappresentare determinate realtà di interesse, mediante la simulazione basata su agenti ovvero software capace di modellare i comportamenti di un sistema, ed è utilizzata per analizzare sistemi complessi. Grazie alla continua evoluzione del settore informatico, si possiedono le capacità di modellare e prevedere approssimativamente l'evoluzione di sistemi molto complessi su larga scala.\\
+Tipicamente la realizzazione di modelli di simulazioni, rappresentanti la realtà d'interesse, è relegata esclusivamente a sviluppatori software. 
+Su questa considerazione nasce l'\textbf{Agent Modeling Platform}, progetto Eclipse open source, che si pone come obiettivo offrire la possibilità di costruire modelli di simulazione, anche a chi non possiede conoscenze nel campo della programmazione, attraverso l'utilizzo di strumenti grafici intuitivi.\\
+AMP fornisce il supporto per diversi sistemi multiagente e consente la creazione grafica di modelli di simulazione, costruendo un \emph{metamodello} astratto, la cui elaborazione da parte della piattaforma genera automaticamente codice e documentazione. Oltre all'aspetto di modellazione, è offerto il supporto alla esecuzione e visualizzazione delle simulazioni basate su agenti, grazie ad una architettura modulare ed estensibile.\\
+L'obiettivo di questo lavoro di tesi è quello di descrivere ed analizzare dettagliatamente la \emph{Agent Modeling Platform}, la sua architettura e le numerose tecnologie su cui si fonda, evidenziando in particolar modo le conoscenze acquisite, necessarie alla comprensione delle caratteristiche e delle problematiche riscontrate nello studio di questo ampio ed elaborato progetto.
+
+\end{document}
