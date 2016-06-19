@@ -37,7 +37,7 @@
 %\usepackage[final,backref,breaklinks,pagebackref,colorlinks]{hyperref}
 %HYPERREF per uso con con pdf (con bookmark)
 %\usepackage[final,bookmarks,backref,breaklinks,dvips,colorlinks]{hyperref}\\
-\usepackage[final,bookmarks,backref,breaklinks,colorlinks]{hyperref}
+\usepackage[final,bookmarks,breaklinks,colorlinks]{hyperref}
 %mypackages
 \usepackage{listings}
 \input{IsisMacro.tex}
@@ -120,35 +120,10 @@ Anno Accademico 2015-2016
 \input{conclusions.tex}
 
 
-\begin{thebibliography}{}
+
 \addcontentsline{toc}{chapter}{Bibliografia}% inserisce nell'indice la bibliografia
+\bibliography{master_thesis}
+\bibliographystyle{ieeetr}
 
-\bibitem{1}{W.Shen, D.H. Norrie, Agent-Based Systems for Intelligent
-Manufacturing: A State-of-the-Art Survey, Knowledge and Information
-Systems, an Int. Jour. 1, 2, (1999) 129-156.}
-
-\bibitem{2}{Boids \url{http://en.wikipedia.org/wiki/Boids}}
-
-\bibitem{3}{Swarm \url{www.santafe.edu/media/workingpapers/96-06-042.pdf}}
-
-\bibitem{4}{MASON \url{http://cs.gmu.edu/~eclab/projects/mason/}}
-
-\bibitem{5}{NetLogo Models Library \url{http://ccl.northwestern.edu/netlogo/models/}}
-
-\bibitem{6}{Axtell, R. L. \& Epstein, J. M. (1996) Growing Artificial Societies: Social Science from the Bottom Up (Brookings Institution Press/MIT Press, Cambridge, MA)}
-
-\bibitem{7}{M.E. Inchiosa \& M.T. Parker, (2002) Overcoming design and development challenges in agent-based modeling using ASCAPE \url{http://www.pnas.org/content/99/suppl_3/7304.full.pdf+html}}
-
-\bibitem{8}{M.J. North, N.T. Collier, J. Ozik, E.R. Tatara, C.M. Macal, M. Bragen and P. Sydelko, (2013) Complex adaptive systems modeling with Repast Simphony \url{http://www.casmodeling.com/content/1/1/3}}
-
-\bibitem{9}{Eclipse Development Process \url{https://www.eclipse.org/projects/dev_process/}}
-
-\bibitem{10}{Eclipse Modeling Framework \url{http://www.eclipse.org/modeling/emf/}}
-
-\bibitem{11}{D. Steinberg, F. Budinsky, M. Paternostro, E. Merks, EMF: Eclipse Modeling Framework 2nd Edition, Addison-Wesley Professional}
-
-\bibitem{12}{M.Amoruso, (2013) Progettazione assistita di simulazioni agent-based: l'integrazione di una nuova target platform in Agent Modeling Platform}
-
-\end{thebibliography}
 
 \end{document}
