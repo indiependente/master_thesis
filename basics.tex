@@ -101,18 +101,63 @@ Lo scopo finale per cui nasce la fisica statistica, in particolare la meccanica 
 
 \section{Modello di Ising}
 Il modello di Ising è un classico problema combinatoriale della fisica statistica, studiato per la prima volta da Ernest Ising nel 1920. Tale modello è interessato alla fisica delle transizioni di fase, che occorrono quando un piccolo cambiamento nei parametri, come temperatura o pressione, causa un grande cambiamento qualitativo nello stato del sistema. Le transizioni di fase sono comuni nella fisica, come ad esempio nel fenomeno del ferromagnetismo.\\
-Uno degli scopi principali del modello di Ising è spiegare come interazioni di breve raggio tra le componenti del sistema siano in grado di dare luogo a comportamenti correlati di lungo raggio e, quindi, di predire in un certo senso il potenziale per una transizione di fase. Tale modello trova applicazione in molti ambiti, in generale in tutti quegli ambiti dove si studia il comportamento cooperativo di grandi sistemi: tali applicazioni sono possibili perché il modello di Ising può essere formulato come un problema matematico. Una semplice definizione matematica del modello di Ising è data in \cite{cipra1987introduction} e in \cite{jerrum1993polynomial}: consideriamo una collezione di siti $\lbrack n \rbrack = \lbrace 0, 1, \cdots, n-1 \rbrace$, in cui ogni coppia $i, j$ ha associata un’energia di interazione $V_{ij}$. Nella maggior parte dei casi di interesse fisico, l’insieme E di coppie con energia di interazione non nulla forma un \textit{regular lattice graph} $([n], E)$: detto anche \textit{mesh graph} o \textit{grid graph}, è un grafo la cui rappresentazione grafica sul piano forma delle tassellature regolari.\\
+Uno degli scopi principali del modello di Ising è spiegare come interazioni di breve raggio tra le componenti del sistema siano in grado di dare luogo a comportamenti correlati di lungo raggio e, quindi, di predire in un certo senso il potenziale per una transizione di fase. Tale modello trova applicazione in molti ambiti, in generale in tutti quegli ambiti dove si studia il comportamento cooperativo di grandi sistemi: tali applicazioni sono possibili perché il modello di Ising può essere formulato come un problema matematico.\\
+Una semplice definizione matematica del modello di Ising è data in \cite{cipra1987introduction} e in \cite{jerrum1993polynomial}: consideriamo una collezione di siti $\lbrack n \rbrack = \lbrace 0, 1, \cdots, n-1 \rbrace$, in cui ogni coppia $i, j$ ha associata un’energia di interazione $V_{ij}$. Nella maggior parte dei casi di interesse fisico, l’insieme E di coppie con energia di interazione non nulla forma un \textit{regular lattice graph} $([n], E)$: detto anche \textit{mesh graph} o \textit{grid graph}, è un grafo la cui rappresentazione grafica sul piano forma delle tassellature regolari.\\
 Il primo passo del modello è quello di assegnare ad ogni sito \textit{i} una variabile $\sigma_i$, detta \textbf{spin}, con $i=1, \dots, n$. Le variabili $\sigma_i$ possono assumere solo due valori, $\sigma_i = \pm 1$, che si possono definire come gli \textit{stati} dei siti.\\
 Una \textbf{configurazione} $\sigma$ del sistema è un assegnamento di spin positivi $\left( \sigma_i = 1 \right)$ o negativi $\left( \sigma_i = 1 \right)$ ad ogni sito $i \in \lbrack n \rbrack$.\\
 L'\textit{energia} di una configurazione è data dall’Hamiltoniana del sistema: nella fisica matematica, tale quantità governa le dinamiche del sistema. Per il modello di Ising, l’Hamiltoniana è definita sotto un’assunzione ben precisa: si assume che solo le interazioni di breve raggio e con i siti più vicini e le interazioni dei siti con un ``campo esterno'' contribuiscono al livello di energia del sistema. Pertanto, per ogni configurazione $\sigma = (\sigma_1, \dots, \sigma_n)$ si ha:\\
 \begin{equation}
 H(\sigma) = - \sum_{\lbrace i,j \rbrace \in E}{V_{ij}\sigma_i\sigma_j} - B \sum_{k\in\lbrack n \rbrack}{\sigma_k}
 \end{equation}
-
+in cui la prima sommatoria varia su tutte le coppie di vicini nel lattice graph mentre la seconda varia su tutti i siti del sistema. $V_{ij}$ e B sono parametri associati rispettivamente alle interazioni dei vicini ed alle interazioni con il campo esterno.\\
+Nel caso in cui tutte le energie di interazione siano non negative, tale sistema modella il comportamento di un \textit{ferromagnete}: una configurazione ``'magnetizzata' (con la maggior parte di coppie di siti vicini aventi $\sigma_i = \sigma_j$), ha un livello di energia più basso rispetto ad una configurazione non magnetizzata. Il parametro B corrisponde alla presenza di un ``campo magnetico esterno''.
 \subsection{Partition Function}
-
+La funzione di partizione è senza alcun dubbio l'oggetto di maggior rilievo introdotto dalla meccanica statistica. La si ottiene dall'esponenziazione dell'Hamiltoniana e sommando su tutte le possibili configurazioni $\sigma$, cioè su $2^n$ possibili assegnamenti di valori $\pm1$ alle $n$ variabili $(\sigma_1, \dots, \sigma_n)$:
+\begin{equation}
+	Z = Z(V_{ij}, B, \beta) = \sum_{\sigma}{exp(-\beta H(\sigma))}.
+\end{equation}
+Nell'ambito della meccanica statistica, solitamente $\beta = 1 / kT$, dove $k$ è la costante di Boltzmann e T è la temperatura $(\beta > 0)$.\\
+La partition function è utilizzata come ``denominatore'' nel calcolo delle probabilità. In particolare, la probabilità che il sistema si trovi in una specifica configurazione $\sigma$ è data dalla formula
+\begin{equation}
+	P(\sigma) = \frac{e^{-\beta H(\sigma)}}{Z}
+\end{equation}
+Il segno negativo apporta una maggiore probabilità agli stati con energia più bassa. Valori bassi di $\beta$, corrispondenti ad alta temperatura, tendono ad ``appiattire'' la distribuzione, rendendo così tutte le configurazioni equiprobabili o quasi. Alti valori di $\beta$, corrispondenti a bassa temperatura, tendono ad apportare maggiore probabilità agli stati con energia minore.\\
+È possibile ottenere, a partire dalla partition function Z, due quantità altrettanto importanti, la \textit{mean energy} $\epsilon = -\partial(ln Z)/\partial\beta$ ed il \textit{mean magnetic moment} $\mathcal{M} = \beta^{-1}\partial(ln Z)/\partial\beta$.
 \section{Cenni di probabilità e statistica}
-
+Di seguito vengono riportati concetti e definizioni utili alla comprensione di questo lavoro di tesi (per maggiori dettagli consultare \cite{grinstead2012introduction}).\\
+\paragraph{Spazio delle probabilità.} Tripla $(\Omega, F, P)$, dove $\Omega$ è lo \textit{spazio campionario}, cioè l'insieme dei possibili esiti (o \textit{outcome}), $F$ è l'insieme degli eventi, mentre $P : \mathcal{F} \rightarrow [0, 1]$ è una funzione che assegna probabilità ad eventi.\\
+\paragraph{Variabile aleatoria.} Definita su uno spazio di probabilità, esprime il valore numerico di un outcome di un evento. Una variabile aleatoria \textit{X} è una funzione definita sullo spazio degli outcome $\Omega$, ed associa ad ogni elemento di $\Omega$ un valore in $\mathcal{R}$.
+Sia \textit{X} una variabile casuale che rappresenta il valore degli outcome di un certo evento e si assuma che tale evento possa avere solo un numero finito di possibili outcome. Sia $\Omega$ lo spazio campionario dell'esperimento. Una \textit{funzione di distribuzione} per \textit{X} è una funzione \textit{p} di valori reali il cui dominio è $\Omega$ e che soddisfa $p(\omega) \geq 0$ e $\sum{p(\omega)} = 1$, con $\omega \in \Omega$.\\
+Per ogni sottoinsieme \textit{E} di $\Omega$, definiamo la \textit{probabilità} di \textit{E} come
+\begin{equation}
+	P(E) = \sum_{\omega \in E}{p(\omega)}.
+\end{equation}
+La funzione $p(\omega)$ è la \textbf{distribuzione di probabilità} della variabile aleatoria \textit{X}.
+\paragraph{Valore atteso.} Sia \textit{X} una variabile casuale discreta con spazio campionario $\Omega$ e funzione di distribuzione $p(x)$. Il \textit{valore atteso E(X)} è definito come
+\begin{equation}
+	E(X) = \sum_{x\in \Omega} x p(x)
+\end{equation}
+a patto che tale sommatoria converga (altrimenti X non avrebbe valore atteso).
+Di solito, il valore atteso è anche chiamato \textit{media}, ed è indicato con il simbolo $\mu$. Alcune delle principali proprietà di cui gode il valore atteso sono riportate di seguito:
+\begin{itemize}
+	\item Siano $X$ ed $Y$ due variabili aleatorie con valori attesi finiti, allora $E(X+Y) = E(X) + E(Y)$
+	\item Sia X una variabile aleatoria con valore atteso finito e sia $c$ una costante, allora $E(cX) = cE(X)$
+	\item Siano X e Y due variabili aleatorie indipendenti, allora $E(X\cdotY) = E(X) \dot E(Y)$.
+\end{itemize}
+\paragraph{Varianza.} Sia \textit{X} una variabile casuale con valore atteso $\mu = E(X)$. Allora la \textit{varianza} di X, indicata con $V(X)$, o con $\sigma^2$, è pari a
+\begin{equation}
+	V(X) = E((X - \mu^2)).
+\end{equation}
+La varianza può essere anche scritta come
+\begin{equation}
+	V(X) = \sum_x {(x - \mu^2)p(x)}.
+\end{equation}
+Una utile alternativa al calcolo della varianza è data dal seguente teorema: \textit{sia X una variabile casuale con} $E(X) = \mu^2$, \textit{allora} $V(X) = E(X^2) - \mu^2$. Per maggiori dettagli riguardati la prova di tale teorema, consultare pagina 258 di \cite{grinstead2012introduction}.\\
+Alcune importanti proprietà della varianza:
+\begin{itemize}
+	\item Sia \textit{X} una variabile casuale e $c$ una costante, allora $V(cX) = c^2V(X)$
+	\item Siano $X$ ed $Y$ due variabili casuali indipendenti, allora $V(X+Y) = V(X) + V(Y)$.
+\end{itemize}
 \section{Processi Markoviani}
 \subsection{Irriducibilità e periodicità}
 \subsection{Distribuzione stazionaria}
