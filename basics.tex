@@ -142,7 +142,7 @@ Di solito, il valore atteso è anche chiamato \textit{media}, ed è indicato con
 \begin{itemize}
 	\item Siano $X$ ed $Y$ due variabili aleatorie con valori attesi finiti, allora $E(X+Y) = E(X) + E(Y)$
 	\item Sia X una variabile aleatoria con valore atteso finito e sia $c$ una costante, allora $E(cX) = cE(X)$
-	\item Siano X e Y due variabili aleatorie indipendenti, allora $E(X\cdotY) = E(X) \dot E(Y)$.
+	\item Siano X e Y due variabili aleatorie indipendenti, allora $E(X\cdot Y) = E(X) \dot E(Y)$.
 \end{itemize}
 \paragraph{Varianza.} Sia \textit{X} una variabile casuale con valore atteso $\mu = E(X)$. Allora la \textit{varianza} di X, indicata con $V(X)$, o con $\sigma^2$, è pari a
 \begin{equation}
@@ -158,9 +158,58 @@ Alcune importanti proprietà della varianza:
 	\item Sia \textit{X} una variabile casuale e $c$ una costante, allora $V(cX) = c^2V(X)$
 	\item Siano $X$ ed $Y$ due variabili casuali indipendenti, allora $V(X+Y) = V(X) + V(Y)$.
 \end{itemize}
+\paragraph{Disuguaglianza di Chebyshev.} Sia \textit{X} una variabile casuale con valore atteso finito $\mu$ e varianza non negativa finita $\sigma^2$. Allora per qualsiasi numeri reale $k > 0$ si ha che
+\begin{equation}
+	Pr(|X - \mu| \geq k) \leq \frac{\sigma^2}{k^2}.
+\end{equation}
+Tale disuguaglianza garantisce che in qualsiasi distribuzione di probabilità, quasi tutti i valori siano vicini alla media.
 \section{Processi Markoviani}
+Di seguito sono introdotti i concetti alla base delle catene di Markov (consultare \cite{levin2009markov} per maggiori dettagli).\\
+Una catena di Markov finita è un processo che si muove tra gli elementi di un insieme finito $\Omega$ nel seguente modo: se si suppone di trovarsi in $x \in \Omega$, allora la prossima posizione è scelta in accordo ad una distribuzione di probabilità fissata $P(x, \cdot)$. Più precisamente, una sequenza di variabili casuali $(X_0, X_1, \dots)$ è una \textbf{catena di Markov con spazio degli stati $\Omega$ e matrice di transizione P} se per tuttu gli $x,y \in \Omega$, per tutti i $t \geq 1$, e per tutti gli eventi $H_{t-1} = \bigcap_{s=0}^{t-1}{X_s = x_s}$ che soddisfano $Pr(H_{t-1} \cap {X_t = x}) > 0$, si ha
+\begin{equation}
+	Pr(X_{t+1} = y | H_{t-1} \cap {X_t = x}) = Pr(X_{t+1} = y | X_t = x) = Pr(x, y).
+	\label{pr_xy}
+\end{equation}
+L'equazione \ref{pr_xy}, nota come \textit{proprietà di Markov}, sta a significare che la probabilità condizionale di procedere dallo stato $x$ allo stato $y$ è la stessa, non importa quale sia la lunghezza degli stati $x_0, \dots, x_{t-1}$ che precedono lo stato corrente $x$. 
 \subsection{Irriducibilità e periodicità}
+Una catena di Markov P è detta \textbf{irriducibile} se, per qualsiasi coppia di stati $x, y \in \Omega$, esiste un intero \textit{t} tale che $P^t(x, y) > 0$. L'affermazione sta ad indicare che è possibile andare da uno stato in un qualsiasi altro stato utilizzando solo transizioni di probabilità positive.\\
+Sia $\mathcal{T}(x) := {t \geq 1 : P^{t}(x,x) > 0}$ l'insieme di volte in cui è possibile per la catena ritornare nella posizione iniziale $x$. Il \textbf{periodo} di $x$ è definito come il \textit{massimo comune divisore (gcd)} di $\mathcal{T}(x)$.\\
+\paragraph{Lemma.} \textit{Se P è irriducibile, allora gcd($\mathcal{T}(x)$) = gcd($\mathcal{T}(y)$)} $\forall x, y \in \Omega$.\\
+Data una catena irriducibile, il periodo della catena è definito come il periodo che è comune a tutti gli stati. La catena sarà detta \textit{aperiodica} se tutti gli stati hanno periodo 1, altrimenti \textit{periodica}.
+\paragraph{Proposizione.} \textit{Se P è aperiodica ed irriducibile, allora vi è un intero r t.c.} $P^r(x, y) > 0 \forall x, y \in \Omega$.\\
+Una catena di Markov finita (con spazio degli stati $\Omega$ finito), \textit{irriducibile} ed \textit{aperiodica} è detta \textbf{ergodica}.
 \subsection{Distribuzione stazionaria}
+Sia $\pi$ una distribuzione di probabilità. Se tale distribuzione soddisfa
+\begin{equation}
+	\pi = \pi P
+\end{equation}
+allora $\pi$ è detta \textit{distribuzione stazionaria} della catena di Markov. tale distribuzione può essere riscritta anche per i singoli elementi della catena:
+\begin{equation}
+	\pi(x) = \sum_{x\in \Omega}{\pi(x)P(x, y)} \forall x,y \in \Omega.
+\end{equation}
+Il risultato ben noto, che si ottiene dalla teoria dei processi Markoviani è che se la catena in questione è ergodica, allora la distribuzione stazionaria è \textit{unica}.\\
+Una catena di Markov è detta \textit{reversibile} se
+\begin{equation}
+	\pi(x)P(x,y) = \pi(y)P(y,x) \forall x,y \in \Omega.
+	\label{revchain}
+\end{equation}
+Quindi, data una catena $(X_t)$ che soddisfa \ref{revchain} ed ha una distribuzione stazionaria iniziale, allora la distribuzione di $(X_0, X_1, \dots, X_n)$ è la stessa di $(X_n, X_{n-1}, \dots, X_0)$.\\
+Un risultato di grande importanza è il \textit{teorema della convergenza}: tale teorema prova che una catena di Markov irriducibile ed aperiodica converge alla sua distribuzione stazionaria.\\
+Prima di enunciare il problema, però, è necessaria la definizione di \textit{total variation distance}: siano $\pi$ e $\mu$ due distribuzioni di probabilità sullo stesso spazio campionario $\Omega$, allora la total variation distance è definita come
+\begin{equation}
+	\|\pi - \mu\| = max_{A\subset\Omega}|\pi(A) - \mu(A)| = \frac{1}{2}\sum_{x\in\Omega}{|\pi(x) - \mu(x)|}.
+\end{equation}
+Si enuncia ora, il \textbf{teorema della convergenza}:
+\paragraph{Teorema.} \textit{Si supponga che P sia irriducibile ed aperiodica, con distribuzione stazionaria $\pi$. Allora esistono due costanti $\alpha \in (0,1) e C > 0 t.c.$}
+\begin{equation}
+	max_{x\in\Omega}\|P^t(x,\cdot) - \pi\| \leq C\alpha^t.
+	\label{convth}
+\end{equation}
+Per la dimostrazione e maggiori dettagli consultare \cite{levin2009markov} (pag. 52).
 \subsection{Catena di Markov Monte Carlo}
-
+Data una matrice di transizione irriducibile \textit{P}, vi è un'unica distribuzione stazionaria $\pi$ che soddisfa $\pi = \pi P$, come affermato nella sezione precedente.\\
+Si consideri ora il problema inverso: data una distribuzione di probabilità $\pi$ su $\Omega$, è possibile trovare una matrice di transizione \textit{P} per cui $\pi$ è la distribuzione stazionaria? \cite{levin2009markov} fornisce un esempio pratico per capire come risolvere tale problema.\\
+Il \textit{campione casuale} da un insieme finito $\Omega$ è definito come una selezione uniformemente casuale da $\Omega$; una selezione tale che ogni elemento ha la stessa probabilità $1/|\Omega|$ di essere scelto.\\
+Sia ${1, 2, \dots, q}$ un insieme di \textit{colori}. Un \textit{proper q-coloring} di un grafo $G=(V, E)$ è un assegnamento di colori ai vertici di V, con il vincolo che nodi vicini non debbano avere lo stesso colore. Per alcune tipologie di grafo, come ad esempio gli alberi, esistono semplici metodi ricorsivi che generano una colorazione casuale; per altri grafi, invece, risulta più difficile. un approccio consiste nell'utilizzare le catene di Markov per campionare: supponiamo che $(X_t)$ sia una catena con spazio degli stati $\Omega$ e con una distribuzione stazionaria uniforme su $\Omega$. Grazie al teorema della convergenza enunciato in \ref{convth}, $X_t$ è approssimativamente uniformemente distribuita quando $t$ è grande.\\
+tale metodo di campionamento a partire da una data distribuzione di probabilità è chiamato \textit{\textbf{Catena di Markov Monte Carlo}}. Si supponga che $\pi$ sia una distribuzione di probabilità su $\Omega$. se + possibile costruire una catena di Markov $(X_t)$ con distribuzione stazionaria $\pi$ allora, per $t$ grande abbastanza si ha che la distribuzione di $X_t$ è vicina a $\pi$.
 \section{Algoritmi di approssimazione}
