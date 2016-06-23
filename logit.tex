@@ -1,4 +1,20 @@
+In questo capitolo si descrive la \textit{Logit dynamics}, introdotta per la prima volta da Blume in \cite{blume1993statistical}. Si evidenziano le sue proprietà e le sue motivazioni. Maggiori dettagli in \cite{ferraioli2012logit}.
 \section{Definizione}
+Si consideri un gioco strategico $\mathcal{G} = ([n], S_1, \dots, S_n, u_1, \dots, u_n)$, in cui $[n] = {1, \dots, n}$ è un insieme finito di giocatori, $S_i$ è l'insieme finito di strategie per il giocatore $i, S = S_1 \times \cdots \times S_n$ è l'insieme dei profili di strategie ed $u_i: S \rightarrow \mathcal{R}$ è la funzione utilità del giocatore $i \in [n]$.\\
+La \textit{Logit dynamics} per un gioco $\mathcal{G}$ procede come segue, ad ogni step:
+\begin{enumerate}
+	\item si sceglie un giocatore $i \in [n]$ a caso;
+	\item sia ggiorna la strategia del giocatore $i$ in accordo alla \textit{logit update rule} con parametro $\beta \geq 0$ sull'insieme $S_i$ delle sue strategie. Cioè. la dinamica sceglie una strategia $s \in S_i$ con probabilità
+	\begin{equation}
+		\sigma_i (s|x) = e^{\beta u_i (s, x_{-i})}/Z_i(x),
+	\end{equation}
+	in cui $x = (x_1, \dots, x_n) \in S$ è il profilo di strategie corrente, $\beta \geq 0$ e
+	\begin{equation}
+		Z_i(x) = \sum_{z\in S_i}{e^{\beta u_i (s, x_{-i})}}
+	\end{equation}
+	è il fattore di normalizzazione.
+\end{enumerate}
+
 
 \section{Propiretà}
 \subsection{Ergodicità}
