@@ -7,6 +7,7 @@ La \textit{Logit dynamics} per un gioco $\mathcal{G}$ procede come segue, ad ogn
 	\item sia ggiorna la strategia del giocatore $i$ in accordo alla \textit{logit update rule} con parametro $\beta \geq 0$ sull'insieme $S_i$ delle sue strategie. Cioè. la dinamica sceglie una strategia $s \in S_i$ con probabilità
 	\begin{equation}
 		\sigma_i (s|x) = e^{\beta u_i (s, x_{-i})}/Z_i(x),
+		\label{sigmai}
 	\end{equation}
 	in cui $x = (x_1, \dots, x_n) \in S$ è il profilo di strategie corrente, $\beta \geq 0$ e
 	\begin{equation}
@@ -15,11 +16,58 @@ La \textit{Logit dynamics} per un gioco $\mathcal{G}$ procede come segue, ad ogn
 	è il fattore di normalizzazione.
 \end{enumerate}
 
+Il parametro $\beta$ indica il \textit{livello di razionalità} del sistema; pertanto, quando $\beta = 0$ il giocatore \textit{i} sceglie la sua strategia in maniera casuale, mentre con $\beta > 0$, la probabilità è influenzata dalle strategie che permettono un \textit{payoff} maggiore, e per $\beta \rightarrow \infty$ il giocatore sceglie la sua \textit{best response}. Inoltre, bisogna notare che la probabilità $\sigma_i (s|x)$ non dipende dalla strategia $x_i$ attualmente adottata dal giocatore $i$.
+Formalmente, la dinamica può essere definita anche nel seguente modo.
+\paragraph{Definizione 3.1.1} \textit{Sia $\mathcal{G} = ([n], \mathcal{S}, \mathcal{U})$ un gioco strategico e sia $\beta \geq 0$. La Logit dynamics per $\mathcal{G}$ è la catena di Markov $\mathcal{M}_{\beta} = ({X_t}_{t \in N}, S, P)$ dove $S = S_1 \times \cdots \times S_n$ e}
+\begin{equation}
+	P(x, y) = \frac{1}{n} \cdot 
+	\begin{cases}
+	\sigma_i(s_i|x), & \text{se}\ y_{-i} = x_{-i} \text{ed}\ y_i \neq x_i\\
+	\sum_{i=1}^{n}{\sigma_i(s_i|x)}, & \text{se}\ x = y\\
+	0, & \text{altrimenti}
+	\end{cases}
+	\label{ergmc}
+\end{equation}
+\textit{con $\sigma_i(s_i|x)$ definita in \ref{sigmai}.}
+Come sarà mostrato nella sezione \ref{ssec:ergod}, la catena di Markov descritta in \ref{ergmc} è ergodica. Pertanto, indipendentemente dallo stato di partenza, la distribuzione della catena al tempo \textit{t} convergerà alla \textit{distribuzione stazionaria $\pi$} man mano che \textit{t} tende ad infinito.\\
+Si consideri ora un \textit{potential game}. Per tale gioco, la distribuzione stazionaria è la ben nota \textit{Gibbs measure}.
+\paragraph{Teorema 3.1.1} \textit{Se $\mathcal{G} = ([n], \mathcal{S}, \mathcal{U})$ è un potential game con funzione potenziale $\Phi$, allora la catena di Markov descritta in \ref{ergmc} è reversibile e la sua distribuzione stazionaria è data dalla Gibbs measure}
+\begin{equation}
+	\pi(x) = \frac{1}{Z}{e^{\beta\Phi(x)}},
+	\label{gibbsm}
+\end{equation}
+\textit{con $Z = \sum_{y\in S}{e^{\beta\Phi(y)}}$ è la costante di normalizzazione.}
+\section{Proprietà}
+Si analizzano ora alcune proprietà della \textit{Logit dynamics} utili alla comprensione di questo lavoro di tesi. Per ulteriori proprietà e dettagli consultare \cite{ferraioli2012logit}.
+\subsection{Ergodicità} \label{ssec:ergod}
+È semplice vedere come la catena di Markov descritta in \ref{ergmc} sia ergodica. Siano $x = (x_1, \dots, x_n)$ ed $y = (y_1, \dots, y_n)$ due profili e sia $z=(z^0, \dots, z^n)$ un \textit{cammino} di profili dove $z^0 = x, z^n = y$ e $z^i=(y_1, \dots, y_i, x_{i+1}, \dots, x_n)$ per $i=1, \dots, n-1$. La probabilità che la catena, iniziando in $x$, si trovi in $y$ dopo $n$ passi è
+\begin{equation}
+	P^n(x,y) = P^n(z^0, z^n) \geq P^{n-1}(z^0, z^{n-1})P(z^{n-1}, z^n),
+\end{equation}
+e, ricorsivamente
+\begin{equation}
+	P^n(x,y) \geq \prod_{i=1}^{n}{P(z^{i-1}, z^i)} > 0,
+\end{equation}
+dove l'ultima disuguaglianza deriva da \ref{ergmc}.
 
-\section{Propiretà}
-\subsection{Ergodicità}
 \subsection{Logit dynamics e Glauber dynamics}
-
+In un \textit{potential game}, la \textit{Logit dynamics} è equivalente alla ben nota \textit{Glauber dynamics}.\\
+Sia $S = S_1 \times \cdots S_n$ uno spazio degli stati e sia $\mu$ una distribuzione di probabilità su $S$, allora la \textit{Glauber dynamics} per $\mu$ procede come segue:\\
+da un profilo $x \in S$ si sceglie un giocatore $i \in [n]$ in maniera casuale e si modifica la sua strategia in $y \in S_i$ con probabilità $\mu$ condizionata dagli altri giocatori che sono in $x_{-i}$
+\begin{equation}
+	\mu(y|x_{-i}) = \frac{\mu(x_{-i}, y)}{\sum_{z\in S_i}{\mu(x_{-i}, z)}}.
+\end{equation}
+È facile vedere come la catena di Markov definita dalla \textit{Glauber dynamics} sia irriducibile, aperiodica e reversibile, con distribuzione stazionaria $\mu$. Quando $\mathcal{G}=([n], \mathcal{S}, \mathcal{U})$ è un \textit{potential game} con funzione potenziale $\Phi$, la \textit{Logit dynamics} definisce la stessa catena di Markov che la \textit{Glauber dynamics} definisce per la \textit{Gibbs distribution} $\pi$ in \ref{gibbsm}.
+In accordo a quanto appena detto, la \textit{Logit dynamics} per un \textit{potential game} e la \textit{Glauber dynamics} per la \textit{Gibbs distribution} sono due modi di guardare la stessa catena di Markov. Grazie a tale analogia, ci si può riferire alla terminologia utilizzata dai fisici per indicare le quantità coinvolte, in particolare, il parametro $\beta$ è detto \textit{inverse temperature} ed il fattore di normalizzazione $Z$ della \textit{Gibbs distribution} \ref{gibbsm} è detto \textit{partition function}.
 \section{Movitazioni}
-
+Nel lavoro introduttivo alla \textit{Logit dynamics} \cite{blume1993statistical}, Blume sottolinea che essa evidenzia due concetti chiave del comportamento strategico: \textit{lock-in} e \textit{bounded rationality}.\\
+La prima proprietà stabilisce che, una volta che un giocatore effettua una scelta, si lega ad essa per qualche tempo: assumendo che tale regola valga nella realtà, giustifica una regola per la scelta di una strategia che tiene conto solamente delle strategie attualmente giocate dagli altri partecipanti e non le strategie che sono state precedentemente scelte. Questo è esattamente ciò che la \textit{Logit update rule} fa in \ref{sigmai}.\\
+La seconda proprietà interviene nella dinamica in due modi: nel comportamento \textit{miopico} dei giocatori che considerano solo il guadagno attuale e non una prospettiva di guadagni futuri e l'\textit{informazione limitata} che tali giocatori hanno. È evidente che la \textit{Logit update rule} in \ref{sigmai} considera tali aspetti. Inoltre, poiché la dinamica descrive una catena di Markov, l'evoluzione del sistema viene trattata in maniera chiara e semplice, permettendo analisi avanzate attraverso gli strumenti forniti dalla teoria dei processi markoviani (alcuni descritti in \ref{sec:markovproc}). Non essendoci restrizioni circa la struttura dei giochi o la loro funzione utilità, tali dinamiche possono essere applicate ad ogni sistema di interesse.\\
+Un'altra caratteristica, che rende tali dinamiche appetibili, è la forte presenza di \textit{probabilità} e \textit{casualità}. L'approccio probabilistico della \textit{Logit dynamics} è motivato anche dalla volontà di modellare sistemi complessi, intrinsecamente casuali e, pertanto, descrivibili solo attraverso modelli probabilistici.\\
+La \textit{Logit dynamics}, quindi, soddisfa una serie di proprietà interessanti che motivano il loro impiego come modello utilizzato per studiare l'evoluzione dei giochi.
 \section{Alcuni Esperimenti}
+In letteratura sono presenti diversi esperimenti atti a paragonare le predizioni della \textit{Logit dynamics} con dati reali.\\
+McKelvey e Palfrey, in \cite{mckelvey1993quantal}, si focalizzano su esperimenti che coinvolgono giochi con due persone in cui vi è un unico equilibrio Nash. I dati reali sono stati raccolti da esperimenti che sono stati eseguiti in più di trent'anni.\\
+Per ogni esperimento, è stata calcolata la stima a \textit{maximum likelihood} del parametro $\beta$ ed è stato analizzato quanto bene il modello approssimi i dati.
+I risultati mostrano che la \textit{Logit dynamics} predice deviazioni sistematiche dall'equilibrio Nash. Ciononostante, gli autori fanno notare che, sebbene ci sia consistenza con il parametro $\beta$ negli esperimenti fatti, vi siano alcuni aspetti dei dati reali che non trovano spiegazione in tale dinamica.\\
+Cameter et al. \cite{ho2007self} considerano sette giochi e stimano il parametro $\beta$ utilizzando il $70\%$ dei soggetti, ed utilizzano tale stima per predire il comportamento del rimanente $30\%$ dei soggetti. Mentre, in un altro test, utilizzano sei giochi per stimare $\beta$ ed utilizzano tali stime sul settimo gioco. I risultati mostrano che ci sono giochi in cui le predizioni della \textit{Logit dynamics} sono paragonabili ai risultati di dinamiche più forti che, però, sono intrattabili analiticamente e si suppone che non convergeranno mai in qualsiasi gioco.

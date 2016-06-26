@@ -163,7 +163,7 @@ Alcune importanti proprietà della varianza:
 	Pr(|X - \mu| \geq k) \leq \frac{\sigma^2}{k^2}.
 \end{equation}
 Tale disuguaglianza garantisce che in qualsiasi distribuzione di probabilità, quasi tutti i valori siano vicini alla media.
-\section{Processi Markoviani}
+\section{Processi Markoviani}\label{sec:markovproc}
 Di seguito sono introdotti i concetti alla base delle catene di Markov (consultare \cite{levin2009markov} per maggiori dettagli).\\
 Una catena di Markov finita è un processo che si muove tra gli elementi di un insieme finito $\Omega$ nel seguente modo: se si suppone di trovarsi in $x \in \Omega$, allora la prossima posizione è scelta in accordo ad una distribuzione di probabilità fissata $P(x, \cdot)$. Più precisamente, una sequenza di variabili casuali $(X_0, X_1, \dots)$ è una \textbf{catena di Markov con spazio degli stati $\Omega$ e matrice di transizione P} se per tuttu gli $x,y \in \Omega$, per tutti i $t \geq 1$, e per tutti gli eventi $H_{t-1} = \bigcap_{s=0}^{t-1}{X_s = x_s}$ che soddisfano $Pr(H_{t-1} \cap {X_t = x}) > 0$, si ha
 \begin{equation}
