@@ -1,3 +1,60 @@
+Questo capitolo focalizza l'attenzione sul lavoro che ha gettato le fondamenta per lo sviluppo del e su cui si basa questa tesi e tanti altri lavori. L'articolo di cui si parla è ``\textit{Polynomial-time approximation algorithms for the Ising model}'', scritto da Mark Jerrum ed Alistair Sinclair nel 1993 \cite{jerrum1993polynomial}.\\
+In breve, \cite{jerrum1993polynomial} presenta un algoritmo randomizzato che calcola la partition function di un sistema di Ising ferromagnetico qualunque, con grado di accuratezza arbitrario. Il tempo di esecuzione di tale algoritmo è polinomiale nella taglia del sistema (i.e. il numero di siti) e variabile in base ad un parametro che controlla l'accuratezza del risultato.
+L'algoritmo si basa su una simulazione Monte Carlo di una catena di Markov ergodica opportunamente definita. Si può già anticipare che gli stati della catena non sono, come accade di solito, configurazioni di spin di Ising, ma spanning subgraph del grafo di interazione del sistema. Le performance dell'algoritmo sono garantite da prove rigorose e poggiano sulla proprietà di \textit{rapidly mixing} della catena di Markov: converge alla sua distribuzione d'equilibrio in un numero \textit{polinomiale} di passi.\\
+Si prosegue con l'analisi dettagliata dell'algoritmo proposto da Jerrum e Sinclair, descrivendo prima il modo con cui si trasforma il modello di Ising in un nuovo dominio, in cui le configurazioni sono spanning subgraph del grafo di interazione; prosegue con la costruzione di un \textit{fully polynomial randomised approximation scheme (fpras)} per il calcolo della partition function ed infine analizzando la catena di Markov definita sulle nuove configurazioni.\\
+Nei capitoli successivi, l'algoritmo proposto verrà identificato come ``\textit{algoritmo naive}''.
 \section{Spins world e Subgraphs world}
+L'obiettivo è costruire un algoritmo per il seguente problema:
+\textbf{Istanza}: una matrice reale simmetrica $(V_{ij} : i,j \in [n])$ delle energie di interazione, un numero reale B che rappresenta il campo esterno ed un numero reale positivo $\beta$.
+\textbf{Output}: la partition function
+\begin{equation}
+	Z = Z(V_{ij}, B, \beta) = \sum_{\sigma}{exp(-\beta H(\sigma))},
+	\label{partf}
+\end{equation}
+Dove l'Hamiltoniana $H(\sigma)$ è data da
+\begin{equation}
+	H(\sigma) = - \sum_{\{i,j\}\in E}{V_{ij}\sigma_i\sigma_j} - B\sum_{k\in [n]}{\sigma_k}
+	\label{hamilt}
+\end{equation}
+ed E è l'insieme di coppie non ordinate ${i, j}$ con $V_{ij} \ne 0$.\\
+Tale algoritmo tratta il caso \textit{ferromagnetico} del modello di Ising, che è caratterizzato da energie di interazione $V_{ij}$ non negative. È importante tenere a mente che piuttosto di calcolare \textit{esattamente} la partition function, si preferisce approssimarla.\\
+Una strategia, rivelatasi molto utile per problemi di questo tipo, prevede la simulazione di una catena di Markov opportuna. Un'applicazione diretta di questa strategia alla partition function di Ising procederebbe come segue: si considerino le configurazioni del sistema di Ising, cioè i $2^n$ possibili vettori di spin $\sigma \in {-1, +1}^n$, come gli stati della catena di Markov. Si scelgano poi le probabilità di transizione tra gli stati così da rendere la catena \textit{ergodica} e quindi, nella distribuzione stazionaria, la probabilità di essere nello stato $\sigma$ è $Z^{-1}exp(-\beta H(\sigma))$. Un modo ragionevole per raggiungere ciò, spesso utilizzato, è permettere che le transizioni occorrano tra configurazioni di sping che differiscano in una sola componente, e scegliere le probabilità di transizione in accordo alla regola di Metropolis \cite{gelatt1983optimization}. Se la catena di Markov risultante è \textit{rapidly mixing}, cioè se converge rapidamente alla distribuzione stazionaria indipendentemente dalla scelta dello stato iniziale, allora può essere usata efficacemente per campionare le configurazioni $\sigma$ da una distribuzione che è vicina alla distribuzione stazionaria. Raccogliendo sufficienti campioni di configurazioni, usando differenti valori di B e $\beta$, dovrebbe essere possibile stimare la partition function $Z$ con buona accuratezza.\\
+Purtroppo, la catena di Markov così descritta (lo \textit{spin-world process}) non è rapidly mixing. È ben noto che i sistemi ferromagnetici di Ising esibiscono tipicamente una transizione di fase ad un certo valore del parametro $\beta$, per valori al di sopra del punto critico, il sistema si stabilizza in uno stato in cui vi è una preponderanza di spin di uno o l'altro segno. transizioni tra gli stati con maggioranza di +1 e stati con maggioranza di -1 occorrono raramente, semplicemente perché la distribuzione stazionaria assegna un peso totale di basso valore alle configurazioni con spin bilanciati.\\
+Il problema causato dall'assenza di \textit{rapid mixing} nello \textit{spin-world process} può essere aggirato simulando una catena di Markov differente: il \textit{subgraphs-world process}. Sebbene le due catene di Markov siano strutturalmente differenti, ed inoltre, il \textit{subgraphs-world process} non abbia alcun significato fisico, quest'ultimo ha una forte connessione con la \textit{partition function} del modello di Ising e, cosa fondamentale nell'applicazione corrente, è \textit{rapidly mixing}.\\
+Tale processo sarà descritto in dettaglio nella sezione \ref{sec:swp}.\\\\
+Un sottografo si dice \textit{spanning} se include tutti i vertici del grafo ``genitore'' (in generale gli \textit{spanning subgraph} non sono connessi). Le configurazioni del \textit{subgraph-world} sono \textit{spanning subgraph} del grafo di interazione $([n], E)$. Per semplificare la notazione, siano
+\begin{equation}
+	\lambda_{ij} = tanh \beta V_{ij}
+	\label{lamij}
+\end{equation}
+\begin{equation}
+	\mu = tanh B \beta
+	\label{mu}
+\end{equation}
+Ad ogni configurazione $X \subseteq E$ è assegnato un \textit{peso}, in accordo alla formula
+\begin{equation}
+	w(X) = \mu^{|odd(x)|}\prod_{\{i,j\} \in X}{\lambda_{ij}},
+\end{equation}
+in cui la notazione odd(X) sta ad indicare l'insieme di tutti i vertici che hanno grado dispari nel grafo $X$.\\
+La partition function per il \textit{subgraphs-world} è
+\begin{equation}
+	Z^\prime = \sum_{X \subseteq E}{w(X)}.
+	\label{zprime}
+\end{equation}
+La formula \ref{zprime} è conosciuta come ``\textit{the high temperature expansion}''.\\
+Una relazione interessante è quella tra le partition function $Z$ e $Z^\prime$: esse sono correlate in maniera semplice. Si definisca
+\begin{equation}
+	A = (2cosh\beta B)^{n} \prod_{\{i,j\}\in E}{cosh\beta V_{i,j}},
+	\label{funca}
+\end{equation}
+si noti che $A$ è una funzione che può essere facilmente calcolata, poiché è composta dai parametri che specificano il sistema di Ising.\\
+Il seguente risultato classico \cite{newell1953theory} lega le due partition function:
+\begin{thm}
+	$Z = AZ^\prime$.
+\end{thm}
+Tale teorema ha portato gli autori di questo lavoro a considerare un sistema della meccanica statistica le cui configurazioni sono \textit{spanning subgraph} di $([n], E)$. In seguito sarà definita una catena di Markov i cui stati sono queste configurazioni, e la cui distribuzione stazionaria assegna probabilità $\pi(X) = w(X)/Z^\prime$ alla configurazione $X$. questo processo, analizzato in dettaglio nella sezione \ref{sec:swp}, sarà dimostrato essere \textit{rapidly mixing} ed, inoltre, fornirà un mezzo efficiente per campionare le configurazioni con probabilità approssimativamente proporzionali ai loro pesi.\\
+Poiché $Z^\prime$ è una somma pesata delle configurazioni, ci si aspetta che tale procedura dia informazioni utili su $Z^\prime$ stessa e, di conseguenza, sulla partition function originale $Z$.\\
+Per la dimostrazione di tale teorema, riferirsi a \cite{jerrum1993polynomial} (pag. 1091).
 \section{Stima della Partition Function}
-\section{Analisi del subgraphs-world process}
+
+\section{Analisi del subgraphs-world process} \label{sec:swp}
