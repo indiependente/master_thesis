@@ -34,6 +34,7 @@ Un sottografo si dice \textit{spanning} se include tutti i vertici del grafo ``g
 Ad ogni configurazione $X \subseteq E$ è assegnato un \textit{peso}, in accordo alla formula
 \begin{equation}
 	w(X) = \mu^{|odd(x)|}\prod_{\{i,j\} \in X}{\lambda_{ij}},
+	\label{weightfunc}
 \end{equation}
 in cui la notazione odd(X) sta ad indicare l'insieme di tutti i vertici che hanno grado dispari nel grafo $X$.\\
 La partition function per il \textit{subgraphs-world} è
@@ -51,10 +52,48 @@ si noti che $A$ è una funzione che può essere facilmente calcolata, poiché è
 Il seguente risultato classico \cite{newell1953theory} lega le due partition function:
 \begin{thm}
 	$Z = AZ^\prime$.
+	\label{thm:zaz}
 \end{thm}
 Tale teorema ha portato gli autori di questo lavoro a considerare un sistema della meccanica statistica le cui configurazioni sono \textit{spanning subgraph} di $([n], E)$. In seguito sarà definita una catena di Markov i cui stati sono queste configurazioni, e la cui distribuzione stazionaria assegna probabilità $\pi(X) = w(X)/Z^\prime$ alla configurazione $X$. questo processo, analizzato in dettaglio nella sezione \ref{sec:swp}, sarà dimostrato essere \textit{rapidly mixing} ed, inoltre, fornirà un mezzo efficiente per campionare le configurazioni con probabilità approssimativamente proporzionali ai loro pesi.\\
 Poiché $Z^\prime$ è una somma pesata delle configurazioni, ci si aspetta che tale procedura dia informazioni utili su $Z^\prime$ stessa e, di conseguenza, sulla partition function originale $Z$.\\
 Per la dimostrazione di tale teorema, riferirsi a \cite{jerrum1993polynomial} (pag. 1091).
 \section{Stima della Partition Function}
-
+Si analizza ora, e descrive, un \textit{efficiente} algoritmo di approssimazione per il calcolo della partition function $Z$ di un sistema di Ising ferromagnetico (definizione di ``algoritmo di approssimazione efficiente'' al paragrafo \ref{sec:approxalgo}).\\
+Gli autori dell'articolo assumono di trattare con un modello computazionale in cui l'aritmetica è effettuata con un'accuratezza perfetta ed in cui le operazioni aritmetiche e le funzioni standard (i.e. l'esponenziazione) abbiano costo unitario. Inoltre, la taglia dell'istanza del problema è data da $n$, cioè il numero di siti.\\
+Dato un sistema di Ising ferromagnetico $\langle\lambda_{ij}, \mu\rangle$  on $\lambda_{ij}$ e $\mu$ definiti nella sezione precedente in \ref{lamij} e \ref{mu}, sia $\Omega$ l'insieme di \textit{subgraphs-world configuration} e sia $\pi$ la distribuzione di probabilità su $\Omega$: $\pi(X) = w(X)/\sum_{X^{\prime}}{w(X^{\prime})} = w(X)/Z^{\prime}$, dove $w$ è la funzione peso definita in \ref{weightfunc}.
+È importante notare che, poiché il sistema è ferromagnetico, $w(X) \geq 0$ per ogni $X \in \Omega$, pertanto $\pi$ è una distribuzione di probabilità.
+\paragraph{Generatore.} Un \textit{generatore} per le \textit{subgraphs-world configuration} è un algoritmo probabilistico che prende in input un sistema di Ising ferromagnetico nella forma $\langle\lambda_{ij}, \mu\rangle$, più una tolleranza reale positiva $\delta$, e restituisce un elemento di $\Omega$ preso da una distribuzione $p$ che soddisfa la seguente \textit{variation distance}
+\begin{equation}
+	\label{vardist}
+	\|p-\pi\| \leq \delta.
+\end{equation}
+Risulta possibile costruire un generatore efficiente per le \textit{subgraphs-world configuration}, come enunciato nel seguente teorema.
+\begin{thm}
+	Esiste un generatore per le subgraphs-world configuration che, su input $\langle \lambda_{ij}, \mu\rangle$ e $\delta$, ha un tempo d'esecuzione limitato da un polinomio in $n$, $\mu^{-1}$ e $log\delta^{-1}$. Nello specifico, il tempo di esecuzione del generatore è $O(m^2\mu^{-8}(log\delta^{-1} + m))$, in cui $m = |E|$ è il numero di interazioni non nulle.
+	\label{thm:gen}
+\end{thm}
+È importante notare che la presenza di $\mu^{-1}$ nel bound sul tempo implica che il generatore sia inefficiente per sistemi con un campo esterno molto basso. Come detto in precedenza, la costruzione di un generatore con tali proprietà basato sulla simulazione di una catena di Markov opportunamente definita, è descritta e giustificata nella sezione \ref{sec:swp}. Per il momento gli autori dell'articolo assumono il Teorema \ref{thm:gen} e mostrano come i campioni prodotti dal generatore possano essere usati per ottenere un efficiente algoritmo di approssimazione per la partition function Z.\\
+Jerrum e Sinclair partono da una considerazione: suppongono di voler stimare il valore di una quantità fisica associata ad un sistema di Ising ferromagnetico. Il primo passo è esprimere tale quantità come \textit{valore atteso} di una \textit{variabile casuale} opportunamente definita sulle configurazioni del \textit{subgraphs world}. Dopodiché assumono di poter stimare tale quantità campionando delle configurazioni in maniera casuale con l'aiuto del generatore del Teorema \ref{thm:gen}, e calcolandone infine la \textit{media campionaria}.
+Precisamente, sia $f$ una funzione non negativa a valori reali definita sull'insieme $\Omega$ di configurazioni del \textit{subgraphs world} di un sistema di Ising ferromagnetico. Considerando $\Omega$ come uno spazio campionario con distribuzione di probabilità $\pi(X) = w(X)/Z^{\prime}$, la funzione $f$ diventa una variabile casuale, con valore atteso
+\begin{equation}
+	E(f) = \frac{1}{Z^{\prime}}\sum_{X\in\Omega}{w(X)f(X)}.
+	\label{e_f}
+\end{equation}
+Partendo dal generatore del Teorema \ref{thm:gen} è semplice ottenere una stima di $E(f)$: si costruisce un campione indipendente ${X_i}$ di configurazioni di taglia $s$, e si calcola la media campionaria $s^{-1}\sum_i{f(X_i)}$. Facendo sì che la taglia $s$ sia abbastanza grande, si può raggiungere un qualsiasi grado di accuratezza desiderato con una ragionevole affidabilità. Inoltre, si può ridurre drasticamente la probabilità che la stima cada al di fuori del range accettabile di accuratezza ripetendo l'intero processo $t$ volte e calcolando la \textit{mediana} dei $t$ risultati. L'efficienza di tale esperimento, quindi, dipende da quanto sono grandi i valori di $s$ e $t$; ciò, a sua volta, dipende dalla \textit{varianza} della variabile casuale $f$ o, più precisamente, dal rapporto $max(f)/E(f)$, dove $max(f)$ denota il valore massimo che $f$ assume su $\Omega$.
+Il seguente Lemma quantifica i risultati ottenuti:
+\begin{lem}
+	Sia f una variabile casuale a valori reali e non negativi definita sull'insieme $\Omega$ di subgraphs-world configuration di un sistema di Ising ferromagnetico, e siano $\xi$, $\eta$ numeri reali tali che $0 < \xi \leq 1$ e $0 < \eta \leq 1/2$. Allora vi è un esperimento nella forma descritta in precedenza che utilizza un totale di $504\xi^{-2}\lceil lg\eta^{-1} \rceil max(f)/E(f)$ campioni dal generatore, ognuno con input $\langle\lambda_{ij}, \mu \rangle$ e tolleranza $\delta = \xi E(f)/8max(f)$, e produce un output $Y$ che soddisfa: $Pr(Y \text{ approssima } E(f) \text{ in un range } 1+\xi) \geq 1 - \eta$.
+	\label{lem:gensteps}
+\end{lem}
+Data l'importanza ed il ruolo cruciale che tale Lemma ha avuto nello sviluppo di questo lavoro di tesi, la sua dimostrazione è descritta per esteso e nel dettaglio nel paragrafo \ref{ssec:lemmaproof}.\\
+Il Lemma \ref{lem:gensteps} afferma chiaramente che, qualora si impiegasse tale tecnica, è necessario assicurarsi che il rapporto $max(f)/E(f)$ non sia troppo grande per la variabile casuale $f$ in considerazione. In particolare per questo caso, il criterio di efficienza adottato prevede che il rapporto sia limitato da una funzione polinomiale in $n$, la taglia del sistema.\\
+Si analizzi ora com'è possibile applicare tale tecnica per calcolare la partition function $Z(V_{ij}, V, \beta)$ richiamando anche il Teorema \ref{thm:zaz} della sezione precedente (ricordando che la funzione $A$ può essere calcolata direttamente). In accordo a tale teorema, ci si concentra principalmente sul calcolo di $Z^{\prime}$; il primo passo è quello di scrivere $Z^{\prime}$ esplicitamente in funzione di $\mu$ come segue:
+\begin{equation}
+	Z^{\prime} \equiv Z^{\prime} = \sum_{X \subseteq E}{\mu^{|odd(X)|}} \prod_{\{i,j\}\in X}{\lambda_{ij} = \sum_{k=0}^{\lfloor n/2 \rfloor}}{c_k\mu^{2k}}.
+\end{equation}
+È importante notare che solo le potenze pari di $\mu$ devono essere incluse nella somma, poiché il numero di vertici di grado dispari nel sottografo $X$ è necessariamente pari (si veda il Teorema di Eulero). Pertanto, si considera $Z^{\prime}$ come un polinomio in $\mu^2$ con coefficienti
+\begin{equation}
+	c_k = \sum_{X:|odd(X)|=2k}{\prod_{\{i,j\}\in X}}{\lambda_{ij}}.
+\end{equation}
+\subsection{Prova del Lemma 4.2.1}\label{ssec:lemmaproof}
 \section{Analisi del subgraphs-world process} \label{sec:swp}
