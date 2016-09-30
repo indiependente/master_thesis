@@ -9,13 +9,23 @@
 %%\renewcommand{\tableshortname}{Table}
 %%\renewcommand{\figureshortname{Figure}
 %%\chapapp{\chaptername}
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+\newcommand{\CC}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
 \usepackage[italian,english]{babel}
-\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
 \usepackage{epsfig}
 \usepackage{psfig}
 \usepackage{subfig}
 \usepackage{cite}
 \usepackage{amsmath}
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{thm}{Teorema}[chapter]
+\newtheorem{lem}{Lemma}[chapter]
 \usepackage{latexsym}
 %\usepackage[italian]{minitoc}
 \usepackage{fancybox}
@@ -27,12 +37,13 @@
 \usepackage{color}
 %\usepackage{concmath}
 \usepackage{moreverb}
+
 %HYPERREF per uso con dvi
 %\usepackage[final,backref,breaklinks,pagebackref,colorlinks]{hyperref}
 %HYPERREF per uso con con pdf (con bookmark)
-\usepackage[final,bookmarks,backref,breaklinks,dvips,colorlinks]{hyperref}
+%\usepackage[final,bookmarks,backref,breaklinks,dvips,colorlinks]{hyperref}\\
+\usepackage[final,bookmarks,breaklinks,colorlinks,allcolors=black]{hyperref}
 %mypackages
-\usepackage{listings}
 \input{IsisMacro.tex}
 
 \begin{document}
@@ -41,39 +52,48 @@
 \begin{titlepage}
 \begin{center}
 \begin{center}
-\includegraphics[scale=0.28, natwidth=793, natheight=1123]{Figure/logounisa.jpg}
+\includegraphics[scale=0.28, natwidth=793, natheight=1123]{img/logounisa.jpg}
 \end{center}
-{\Large Universit� degli Studi di Salerno}\\[0.2truecm]
-{\large Facolt� di Scienze Matematiche Fisiche e Naturali}\\
+{\Large Universit\`a degli Studi di Salerno}\\[0.2truecm]
+{\large Facolt\`a di Scienze Matematiche Fisiche e Naturali}\\
 \hrulefill
 \vfill
-{\large Tesi di Laurea di I livello in }\\[0.2truecm]
+{\large Tesi di Laurea Magistrale in}\\[0.2truecm]
 {\Large Informatica}\\
-\vfill
-{\Huge Abstract}\\
-\vfill
-{\Huge Progettazione assistita di simulazioni agent-based: l'architettura di Agent Modeling Platform}\\
+\vfill\vfill
+{\Huge ABSTRACT\\A more efficient implementation of the subgraph-world for the Glauber dynamics in the Ising model}
 \vfill\vfill
 
 
-\ \ \ \ \ \ \ {\bf Relatore} \hfill {\bf Candidato}\ \ \\
-Prof. Vittorio Scarano \hfill Francesco Farina\\
-\hfill Matricola 0512100694
+\ \ \ \ \ \ \ {\bf Relatori} \hfill {\bf Candidato}\ \ \\
+Prof. Vincenzo Auletta \hfill Francesco Farina\\
+Dott. Diodato Ferraioli \hfill Matricola 0522500282
 
 \vfill
-\hrulefill 
+\hrulefill
 
-Anno Accademico 2012-2013
+Anno Accademico 2015-2016
 
 \end{center}
 \end{titlepage}
 
-\chapter*{Abstract}
-Lo studio dei sistemi multiagente (ABM) ha acquisito grande attenzione nell'ultimo decennio ed � diventato uno strumento sempre pi� diffuso in molti ambiti di ricerca come biologia, economia, ecologia, scienze sociali.\\
-I sistemi multiagente nascono dalla necessit� di rappresentare determinate realt� di interesse, mediante la simulazione basata su agenti ovvero software capace di modellare i comportamenti di un sistema, ed � utilizzata per analizzare sistemi complessi. Grazie alla continua evoluzione del settore informatico, si possiedono le capacit� di modellare e prevedere approssimativamente l'evoluzione di sistemi molto complessi su larga scala.\\
-Tipicamente la realizzazione di modelli di simulazioni, rappresentanti la realt� d'interesse, � relegata esclusivamente a sviluppatori software. 
-Su questa considerazione nasce l'\textbf{Agent Modeling Platform}, progetto Eclipse open source, che si pone come obiettivo offrire la possibilit� di costruire modelli di simulazione, anche a chi non possiede conoscenze nel campo della programmazione, attraverso l'utilizzo di strumenti grafici intuitivi.\\
-AMP fornisce il supporto per diversi sistemi multiagente e consente la creazione grafica di modelli di simulazione, costruendo un \emph{metamodello} astratto, la cui elaborazione da parte della piattaforma genera automaticamente codice e documentazione. Oltre all'aspetto di modellazione, � offerto il supporto alla esecuzione e visualizzazione delle simulazioni basate su agenti, grazie ad una architettura modulare ed estensibile.\\
-L'obiettivo di questo lavoro di tesi � quello di descrivere ed analizzare dettagliatamente la \emph{Agent Modeling Platform}, la sua architettura e le numerose tecnologie su cui si fonda, evidenziando in particolar modo le conoscenze acquisite, necessarie alla comprensione delle caratteristiche e delle problematiche riscontrate nello studio di questo ampio ed elaborato progetto.
+\pagenumbering{roman}
 
+
+\vfill
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter*{Abstract}
+Un \textit{sistema complesso} può essere visto come un sistema il cui comportamento complessivo risulta dall’interazione delle singole parti, ognuna con i propri obiettivi, spesso soggette ad influenze esterne. Esempi di tali sistemi si possono trovare in vari ambiti di ricerca: a partire dall’\textit{economia}, con lo studio dei mercati, dalla \textit{fisica}, con i sistemi di spin, passando per la \textit{biologia} e lo studio dell’evoluzione, fino ad arrivare all’\textit{informatica}, con lo studio di Internet e delle reti sociali. Questi sistemi sono stati studiati sempre in maniera indipendente, ma negli ultimi anni è stata messa in evidenza l’analogia tra i fenomeni che accadono al loro interno: pertanto è nato il bisogno di trovare uno strumento che fornisca un linguaggio universale comprensibile sia per le scienze naturali che sociali e che permetta di analizzare, quindi, sia la natura che la società.\\
+Nel corso degli anni, la scienza ha sviluppato ben due linguaggi comuni, che si fondono per descrivere tali fenomeni: la \textit{teoria dei grafi} e la \textit{teoria dei giochi}. La teoria dei grafi è una branca della matematica, nata nel 1700, che consente di descrivere le relazioni che intercorrono tra un insieme di oggetti. Il grafo è lo strumento attraverso il quale tali relazioni possono essere espresse ed organizzate. Esso consiste di oggetti chiamati \textit{nodi} e relazioni tra coppie di questi oggetti detti \textit{archi}; tale struttura gode di notevole versatilità: questa caratteristica, in unione alla completa pervasività della tecnologia in ogni ambito operativo umano, fa sì che sia possibile rilevare il grafo nei contesti più variegati, così da essere in grado di analizzare i comportamenti dei suoi nodi. Per modellare il comportamento dei singoli componenti viene utilizzata la \textit{teoria dei giochi}, un campo che riesce ad abbracciare i sistemi complessi nei vari ambiti: economico, biologico, fisico, informatico, sociologico e così via.\\
+La \textit{teoria dei giochi}, tratta con un insieme di \textit{giocatori}, ognuno dei quali possiede un insieme di possibili azioni che può intraprendere, dette anche \textit{strategie}. Ciascun agente sceglie la propria strategia in accordo ad una funzione, detta \textit{payoff}, che non dipende solo dalla strategia del giocatore stesso, ma anche dalle strategie scelte da tutti gli altri giocatori. Il modo in cui tali giocatori modificano le loro strategie in accordo alle scelte effettuate dagli altri, definisce la dinamica del gioco e descrive, quindi, come tale gioco evolve. Se la dinamica, dopo un certo periodo di tempo, raggiunge un punto fisso (cioè uno stato di stabilità), si dice che il gioco è in \textit{equilibrio}.\\
+La \textit{game theory} classica assume che ogni giocatore abbia una \textit{conoscenza completa} del gioco e che ogni agente abbia una potere computazionale illimitato e, pertanto, riesca sempre a scegliere la strategia che massimizza la sua utilità. In questo modello \textit{razionale}, l’evoluzione di un sistema viene modellata attraverso la \textit{best response dynamic}, ed è possibile fare predizioni sul gioco utilizzando il ben noto \textit{equilibrio Nash}. Tuttavia, in molti casi concreti l’assunzione fatta dalla \textit{game theory} classica, può essere irrealistica: i sistemi complessi sono spesso influenzati da fattori ambientali che possono, a loro volta, influire sul modo con cui un giocatore sceglie la propria strategia; inoltre, i giocatori possono avere capacità computazionali limitate, e ciò rappresenta il principale limite soprattutto in sistemi informatici e sociali, e conoscenze limitate circa i fattori esterni che possono influenzare il gioco.\\
+Pertanto, c’è bisogno di definire dinamiche che siano capaci di modellare la \textit{bounded rationality} (conoscenza limitata), in cui i giocatori possono prendere decisioni sbagliate, e che portino il sistema a raggiungere un \textit{equilibrio} che esista sempre, sia unico e velocemente raggiungibile.\\
+La \textit{Logit dynamics}, introdotta da Blume nel 1993, modella le dinamiche di questo tipo: un giocatore può modificare la propria strategia in accordo ad un parametro che rappresenta il livello di razionalità e allo stato del sistema. È ben noto che tale dinamica definisce una \textit{catena di Markov} ergodica sull’insieme di profili di strategie del gioco e, inoltre, è noto che esiste sempre un’unica \textit{distribuzione stazionaria} verso cui la catena converge, indipendentemente dal profilo di partenza. Quando è possibile modellare il problema come un \textit{potential game}, allora la catena di Markov descritta in precedenza è reversibile e la sua distribuzione stazionaria è data dalla \textit{Gibbs measure}. Inoltre, la \textit{Logit dynamics} è equivalente alla ben nota Glauber dynamics; ciò significa che le due dinamiche definiscono la stessa catena di Markov.\\
+L’obiettivo di questo lavoro di tesi è quello di proporre un algoritmo, applicabile in contesti del mondo reale, per la computazione della distribuzione stazionaria della catena di Markov relativa alla \textit{Glauber dynamics} nel modello di Ising.\\
+Purtroppo però calcolare tali valori è un problema complesso dal punto di vista computazionale, in quanto si tratta con un numero esponenziale di termini. Quindi l'idea è quella di approssimare tali valori, simulando una dinamica che converge ``rapidamente'' alla distribuzione stazionaria e che da tale distribuzione sia semplice calcolare quella di nostro interesse.\\
+A tale scopo è stata analizzata in dettaglio la dinamica proposta da Jerrum e Sinclair ed il loro algoritmo. Tali concetti sono stati assimilati ed ottimizzati, sia dal punto di vista teorico che pratico: sono stati affinati i Teoremi, i Lemmi e le assunzioni; tali miglioramenti sono stati rispecchiati anche nel codice prodotto.\\
+Il lavoro svolto ha portato a raggiungere notevoli risultati. Infatti, l'algoritmo proposto, oltre al portare a termine l'esecuzione di esperimenti su reti di piccole-medie dimensioni in secondi, consente di computare la \textit{partition function} anche su reti di medie-grandi dimensioni in tempi ragionevoli, cosa prima assolutamente fuori portata, basti considerare che il tempo d'esecuzione per uno stesso esperimento è stato abbattuto da ore a secondi.\\
+Inoltre è stata verificata la bontà dell'algoritmo sviluppato con un'applicazione pratica nota come ``\textit{The Effectiveness of Advertising}'' su grafi di medie dimensioni, in cui si va calcolare la magnetizzazione della rete a partire dalla sua struttura e dalla polarizzazione dei singoli nodi. In termini economici, questo si traduce nel poter prevedere il risultato della pubblicizzazione di due prodotti, ottenendo la preferenza finale della popolazione.
 \end{document}

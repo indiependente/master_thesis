@@ -1,5 +1,288 @@
-\section{Lemma 8, Teorema 9}
-
-\section{Approssimazione della funzione odd(X)}
-\subsection{logm Subgraphs}
-\subsection{Algoritmo L}
+La \textit{partition function Z} è un oggetto fondamentale nella fisica statistica, ma la derivata parziale di \textit{ln Z} rispetto a $\beta$ e \textit{B} ha un'importanza nettamente maggiore, per i motivi che si vedranno in seguito. Tale quantità è il \textit{mean magnetic moment} che, come anticipato in \ref{partf}, è definita come
+\begin{equation}
+	\mathcal{M} = \beta^{-1}\partial(lnZ)/\partial\beta.
+	\label{mmm}
+\end{equation}
+Esiste un algoritmo di approssimazione polinomiale per $\mathcal{M}$, il quale si basa sulla visione del \textit{mean magnetic moment} come valore atteso di variabili casuali opportunamente definite nel \textit{subgraphs-world}.\\
+È possibile stimare tale valore atteso in maniera diretta, simulando il \textit{subgraphs-world process} per un numero polinomiale di passi.\\
+Tenendo a mente che nella distribuzione del \textit{subgraph-world} ogni configurazione $X$ occorre con probabilità $w(X)/Z^{\prime}$.
+\begin{lem}
+	Supponiamo che la configurazione $X \in \Omega$ sia scelta in maniera casuale in accordo alla distribuzione del subgraph-world. Allora:
+	\begin{itemize}
+		\item $Pr(|odd(X)| > 0) \leq \mu^2/2, \text{ se } \sum{\lambda_{ij}} \geq 1;$
+		\item $Pr(|odd(X)| = 2) \geq \mu^2/10, \text{ se } \sum{\lambda_{ij}} \geq 1 \text{ e } \mu \leq n^{-1}$.
+	\end{itemize}
+	\label{lem:pr_odd}
+\end{lem}
+Segue la dimostrazione, tratta da \cite{jerrum1993polynomial} (pag. 1111).
+\paragraph{Prova del Lemma \ref{lem:pr_odd}}. Si dimostra, attraverso una semplice relazione, che
+\begin{equation}
+	Pr(|odd(X)| = 2) \geq \mu^2 Pr(|odd(X)| = 0).
+	\label{pr_gt_mu_pr}
+\end{equation}
+Sia $\Omega_k$ l'insieme ${X \in \Omega : |odd(X) = 2k|}$. Si associ ad ogni configurazione $X \in \Omega_0$ l'insieme $S(X) = {X^{\prime} \in \Omega : |X^{\prime} \oplus X| = 1} \subseteq \Omega_1$. È semplice verificare che i sottoinsiemi ${S(X) : X \in \Omega_0}$ sono a due a due disgiunti, e che $\sum_{X^\prime\in\Omega_1}{w(X^{\prime}) \geq w(X)\mu^2}$ per ogni $X \in \Omega_0$. (Per $X = \emptyset$ c'è bisogno della condizione $\sum{\lambda_{ij}} \geq 1$.) Quindi $\sum_{X\in\Omega_1}{w(X)\geq\mu^2\sum_{X\in\Omega_0}{w(X)}}$, e \ref{pr_gt_mu_pr} segue dalla divisione per $Z^\prime$.\\
+Segue da \ref{pr_gt_mu_pr} che $Pr(|odd(X)| > 0) \geq \mu^2/(1+\mu^2) \geq \mu^2/2$, e questo deriva dalla prima parte del lemma. Inoltre, il Lemma \ref{lem:inflim} assicura che $Pr(|odd(X)| = 0) \geq 1/10$ quando $\mu \leq n^{-1}$. Combinando questa osservazione con \ref{pr_gt_mu_pr} porta alla seconda parte del lemma. \qed\\
+Viene enunciato ora il teorema principale che consente di realizzare l'algoritmo di approssimazione per $\mathcal{M}$.
+\begin{thm}
+	Esiste un fpras per il mean magnetic moment $\mathcal{M} = \beta^{-1}\partial(lnZ)/\partial\beta$, dove $Z$ è la partition function di un sistema di Ising ferromagnetico.
+	\label{thm:fpras_mmm}
+\end{thm}
+La prova completa è disponibile in \cite{jerrum1993polynomial} (pag. 1105). Per ora è analizzata solamente la parte della dimostrazione che interessa questo lavoro di tesi.\\
+Come accennato prima, bisogna esprimere la quantità $\mathbf{M}$ come valore atteso nel \textit{subgraphs-world} differenziando il logaritmo dell'espansione data nel Teorema \ref{zazuno} rispetto a B, ma prima di effettuare tale operazione, gli autori forniscono dei calcoli preliminari.\\
+Poiché $\mathcal{M} = 0$ quando $B = 0$, essi assumono che $B > 0$. Ricordando che $w(X) = \Lambda(X)\mu^{|odd(X)|}$, dove $\mu = tanh\,\beta\,B$ per definizione, e $\Lambda(X)$ è indipendente da B, si ha
+\begin{align}
+	\frac{\partial}{\partial B}w(X) &= \Lambda(X)|odd(X)|\mu^{|odd(X)|-1}(sech\,\beta\,B)^2 \beta\nonumber\\
+	&= \beta\,w(X)\,|odd(X)|\,(tanh\,\beta\,B)^{-1}(sech\,\beta\,B)^2\\
+	&= w(X) \frac{2\,\beta\,|odd(X)|}{sinh\,2\beta\,B}\nonumber.
+\end{align}
+Inoltre, dalla definizione di $A$ fornita in \ref{funca},
+\begin{equation}
+	\frac{\partial}{\partial\,B}ln\,A = \frac{\partial}{\partial\,B}\,n\,ln\,cosh\,\beta\,B = n\,\beta\,tanh\,\beta\,B.
+\end{equation}
+Dopo aver definito tali identità, gli autori calcolano $\mathcal{M}$ utilizzando l'espansione del Teorema \ref{thm:zaz} come punto di partenza:
+\begin{align}
+	\mathcal{M} = \frac{1}{\beta}\,\frac{\partial}{\partial\,B}\,ln\,Z &= \frac{1}{\beta}\,\frac{\partial}{\partial\,B}\,ln\,A + \frac{1}{\beta}\,\frac{\partial}{\partial\,B}\,ln\,Z^\prime\nonumber\\
+	&= n\,tanh\,\beta\,B + \frac{1}{\beta\,Z^\prime}\,\sum_X{\frac{\partial}{\partial\,B}\,w(X)}\\
+	&= n\,tanh\,\beta\,B + \frac{1}{Z^\prime}\,\sum_X{w(X)\,\frac{2\,|odd(X)|}{sinh\,2\,\beta\,B}}\nonumber.
+\end{align}
+Utilizzando la notazione, come fatto in precedenza,
+\begin{equation}
+	E(f) = (Z^\prime)^{-1}\sum_X{w(X)f(X)}
+\end{equation}
+per esprimere il valore atteso di una variabile casuale $f$ nel \textit{subgraphs-world}, l'identità appena espressa può essere scritta in maniera più compatta come
+\begin{equation}
+	\mathcal{M} = n\,tanh\,\beta\,B + \frac{2}{sinh\,2\,\beta\,B}\,E|odd(X)|.
+	\label{m_compact}
+\end{equation}
+\section{Approssimazione della funzione odd(X)}\label{sec:oddx}
+Per approssimare $\mathcal{M}$ in un range $1 + \epsilon$ è sufficiente, poiché entrambi i termini di \ref{m_compact} sono positivi, stimare $E|odd(X)|$ in un range $1 + \epsilon$. Gli autori propongono di raggiungere tale obiettivo utilizzando la catena di Markov $\mathcal{MC}_Ising$ analizzata in \ref{sec:swp}, per fornire un numero polinomiale di campioni di configurazioni $X$ dalla distribuzione del \textit{subgraphs-world}, e restituire la media di $|odd(X)|$ sui campioni. Come discusso nella sezione che precede il Lemma \ref{lem:gensteps}, tale approccio porterà ad un \textit{fpras} per $\mathcal{M}$ a patto che il rapporto $max\,|odd(X)|/E|odd(X)|$ sia limitato da un polinomio in $n$.\\
+Per dare un tale \textit{bound} a questo rapporto, gli autori procedono per casi, definendone due. Analizziamo solo quello di nostro interesse, cioè il \textit{Caso I}, ed in particolare il sottocaso \textit{Caso I(a)}:
+\textit{Caso I}. $\sum{\lambda_{ij}} > 1$.
+\textit{Caso I(a).} $\mu \geq n^{-1}$. In questo range è possibile stimare $\mathcal{M}$ con un esperimento diretto. Dal Lemma \ref{thm:fpras_mmm},
+\begin{equation}
+	E|odd(X)| \geq 2\, Pr(|odd(X)| > 0) \geq \mu^2 \geq n^{-2},
+	\label{eoddx_bound}
+\end{equation}
+dove, ovviamente, $max\,|odd(X)| \geq n$.\\
+Pertanto il rapporto $max\,|odd(X)|/E|odd(X)|$ è limitato inferiormente da $n^3$.
+\subsection{Migliore approssimazione per odd(X)}\label{ssec:betteroddx}
+La sezione precedente, mostra come l'approssimazione del \textit{mean magnetic moment} $\mathcal{M}$ sia fortemente influenzata dalla stima del valore atteso della funzione $odd(X)$.\\
+In questa sezione si analizza tale approssimazione, in particolare facendo riferimento alla sua realizzazione presente nel lavoro \cite{rinaldi2016approximation}. Infatti, sebbene sia corretto definire $max(f) = n$ e $min(f) = 2$ (in accordo al Teorema di Eulero), non è accurato dal punto di vista pratico sfruttare il \textit{bound} mostrato in \ref{eoddx_bound}. Approssimare $E|odd(X)|$ con i valori proposti in tale relazione, risulta in un valore atteso non veritiero, in quanto, assumendo che il valore selezionato sia $\mu^2$, e tenendo presente il fatto che $\mu$ è un valore prossimo ad 1 nella maggior parte dei casi, ciò starebbe a significare che \textit{il numero atteso di nodi del grafo della configurazione aventi grado dispari} sia prossimo ad 1.\\
+Come è semplice immaginare, tale stima presenta scarsa accuratezza. Quindi si è pensato ad un algoritmo che consenta di determinare il valore atteso di $odd(X)$ in maniera dinamica, basandosi sull'istanza di grafo in input, avvalendosi della teoria dei \textit{subgraphs-world}.\\
+Si passa ora a sviluppare la relazione di partenza \ref{eoddx_bound} per giungere così ad un nuovo \textit{bound} per $E|odd(X)|$.
+Il valore atteso di $odd(X)$ può essere riscritto come la sommatoria di $x \cdot p(x)$, dove la probabilità è quella che la cardinalità dell'insieme composto dai nodi a grado dispari della configurazione $X$ sia pari a $2x$, per $x$ che varia da $1$ ad $n/2$.
+\begin{align}
+	E|odd(X)| &= \sum_{i=0}^{n/2}{2i\,\cdot\,Pr(|odd(X)|=2i)},\nonumber\\
+\end{align}
+tale probabilità equivale a
+\begin{align}
+	Pr(|odd(X)|\,=\,2i) &= \sum_{X:|odd(X)|=2i}{Pr(X)},\nonumber\\
+\end{align}
+dove $Pr(X)$ rappresenta la probabilità di trovarsi in una delle possibili configurazioni, ed è pari a
+\begin{align}
+	Pr(X) &= \frac{W(X)}{Z^\prime}\nonumber\\
+\end{align}
+ma come mostrato da \ref{weightfunc}, $W(X) = \mu^{|odd(X)|} \cdot\, \prod_{\{i,j\}\in X}{\lambda_{i,j}}$, quindi\\
+\begin{align}
+	Pr(X) &= \frac{\mu^{|odd(X)|}\, \cdot\, \prod_{\{i,j\}\in X}{\lambda_{i,j}}}{Z^\prime}\\
+	&= \frac{\mu^{|odd(X)|}\, \cdot\, \lambda^{|edges(X)|}}{Z^\prime}\nonumber.
+\end{align}
+A questo punto è possibile sostituire nella formula iniziale per riscrivere il valore atteso come
+\begin{align}
+		\label{eoddx}
+		E|odd(X)| &= \sum_{i=0}^{n/2}{2i\cdot\sum_{X:|odd(X)|=2i}{\frac{\mu^{|odd(X)|}\, \cdot\, \lambda^{|edges(X)|}}{Z^\prime}}}\nonumber\\
+		&= \frac{1}{Z^{\prime}}\sum_{i=0}^{n/2} 2i \cdot \mu^{2i} \cdot \sum_{X : |odd(X)| = 2i} \lambda^{|edges(X)|}.
+\end{align}
+Come si evince da \ref{eoddx}, calcolare il valore esatto di $E|odd(X)|$, richiede l'iterazione di tutte le possibili configurazioni $X$, così da poter valutare la sommatoria $\sum_{X : |odd(X)| = 2i} \lambda^{\sharp edges(X)}$.
+\subsection{Algoritmi sviluppati}\label{ssec:algooddx}
+Innanzitutto, è bene ricordare la definizione di sottografo e \textit{spanning subgraph}: un grafo H si dice sottografo di un grafo G se i vertici di H sono un sottoinsieme dei vertici di G e gli archi di H sono un sottoinsieme degli archi di G. Siano $G=(V, E)$ ed $H=(V_1, E_1)$ due grafi. H è un sottografo di G se e solo se $V_1 \subseteq V$ ed $E_1 \subseteq E$. Uno \textit{spanning subgraph} H di un grafo G è un sottografo che contiene tutti i vertici di G, cioé $V_1 = V$.\\
+È semplice intuire che, supponendo di avere un grafo input $G = (V, E)$ con $|E| = m$, il numero di possibili \textit{spanning subgraph} è pari a $2^m$.
+La strategia adottata, per l'iterazione degli \textit{spanning subgraph} è quella di mappare ogni sottografo con una stringa di bit di lunghezza $m$, in cui il bit i-esimo rappresenta l'arco i-esimo, con 0 se non presente in tale configurazione o 1 se presente.\\
+Una volta effettuato tale mapping è possibile enumerare le varie stringhe, per poter contare il grado di ogni nodo e verificare il numero di nodi a grado dispari per tale configurazione, così da poter calcolare il valore atteso di $odd(X)$ secondo la formula \ref{eoddx}.\\
+%versione 1: naive
+\begin{algorithm}
+	\caption{Estimate $odd(X)$ - \textit{naive} version}
+	\label{alg:est_f_naive}
+	\begin{algorithmic}[1] % The number tells where the line numbering should start
+		\Procedure{Estimate\_F}{$graph$}
+		\State $summation\gets 0$
+		\State $Z^{\prime}, \mu, \lambda \gets compute\_Z^\prime(graph)$
+		\For{$subgraph \in spanning\_subgraphs\_iterator(graph)$} 
+			\State $odds \gets count\_odds(subgraph)$ \Comment{Odd degree nodes}
+			\State $summation \gets summation + odds \cdot \mu^{odds} \cdot \lambda^{|edges(subgraph)|}$
+		\EndFor
+		\State \textbf{return} $\frac{summation}{Z^{\prime}}$
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+Questa prima versione dell'algoritmo \texttt{Estimate\_F} può essere vista come un approccio \textit{naive} alla risoluzione del problema. Infatti non tiene conto del tempo impiegato nell'iterazione di tutti i possibili \textit{spanning subgraph} del grafo in input.\\
+Inoltre, da una analisi dei valori di $odds$ ed $|edges(subgraph)|$, si evince che il maggior contributo apportato alla sommatoria mostrata in \ref{eoddx} deriva dai sottografi iniziali, cioè quei sottografi in cui c'è una maggior variazione negli archi presenti.
+\begin{figure}[h!]
+	\vspace*{1cm}
+		\centering
+		\begin{tikzpicture}[-,>=stealth',shorten >=1pt,auto,node distance=2cm,
+		thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries}]
+		\node[main node] (1) {1};
+		\node[main node] (2) [below right of=1] {2};
+		\node[main node] (3) [below left of=1] {3};
+		\path[every node/.style={font=\sffamily\small}]
+		(1) edge node [left] {} (2)
+		
+		(1) edge node [right] {} (3)
+		
+		(2) edge node [right] {} (3);
+		\end{tikzpicture}
+		\caption{Grafo Input}
+		\label{fig:inputg}
+\end{figure}
+\begin{figure}[h!]
+	\vspace*{1cm}
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\begin{tikzpicture}[-,>=stealth',shorten >=1pt,auto,node distance=2cm,
+		thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries}]
+		\node[main node] (1) {1};
+		\node[main node] (2) [below right of=1] {2};
+		\node[main node] (3) [below left of=1] {3};
+		\path[every node/.style={font=\sffamily\small}]
+		(1) edge node [left] {} (2);
+		\end{tikzpicture}
+		\caption*{Sottografo con arco 1-2}
+	\end{minipage}\hfill
+	% <-- needed to keep the imgs side by side
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\begin{tikzpicture}[-,>=stealth',shorten >=1pt,auto,node distance=2cm,
+		thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries}]
+		\node[main node] (1) {1};
+		\node[main node] (2) [below right of=1] {2};
+		\node[main node] (3) [below left of=1] {3};
+		\path[every node/.style={font=\sffamily\small}]
+		(2) edge node [left] {} (3);
+		\end{tikzpicture}
+		\caption*{Sottografo con arco 2-3}
+	\end{minipage}\hfill
+	% <-- needed to keep the imgs side by side
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\begin{tikzpicture}[-,>=stealth',shorten >=1pt,auto,node distance=2cm,
+		thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries}]
+		\node[main node] (1) {1};
+		\node[main node] (2) [below right of=1] {2};
+		\node[main node] (3) [below left of=1] {3};
+		\path[every node/.style={font=\sffamily\small}]
+		(3) edge node [left] {} (1);
+		\end{tikzpicture}
+		\caption*{Sottografo con arco 3-1}
+	\end{minipage}
+	\caption{Sottografi a contributo maggiore}
+	\label{fig:mostcontribsubg}
+\end{figure}
+Ad esempio, la figura \ref{fig:mostcontribsubg} mostra quali sono i sottografi a maggior contributo per il calcolo di $E|odd(X)|$ sul grafo in input \ref{fig:inputg}.
+%versione 2: threshold = log(m)
+Tenendo in considerazione tale osservazione, si è passati ad una seconda versione dell'algoritmo che riducesse i tempi d'esecuzione, andando ad analizzare solamente gli \textit{spanning subgraph} a contributo maggiore. Tale obiettivo è stato raggiunto analizzando i primi sottografi aventi un numero di archi non superiore a $log\,m$.
+\begin{algorithm}
+	\caption{Estimate $odd(X)$ - \textit{threshold} version}
+	\label{alg:est_f_threshold}
+	\begin{algorithmic}[1] % The number tells where the line numbering should start
+		\Procedure{Estimate\_F}{$graph, threshold$}
+		\State $summation\gets 0$
+		\State $Z^{\prime}, \mu, \lambda \gets compute\_Z^\prime(graph)$
+		\For{$subgraph \in spanning\_subgs\_iterator(graph, threshold)$} 
+		\State $odds \gets count\_odds(subgraph)$ \Comment{Odd degree nodes}
+		\State $summation \gets summation + odds \cdot \mu^{odds} \cdot \lambda^{|edges(subgraph)|}$
+		\EndFor
+		\State \textbf{return} $summation, Z^{\prime}, \mu, \lambda$
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+%versione 3: threshold, X1 + X2
+Purtroppo, l'algoritmo \ref{alg:est_f_threshold} soffre di inaccuratezza della stima di $E|odd(X)|$, in quanto l'imposizione di una soglia comporta, inevitabilmente, la perdita di una parte, seppur meno significativa, della sommatoria, andando così ad ottenere alla fine un valore sottostimato.\\
+Per evitare che ciò accadesse, si è pensato di adottare una tecnica di approssimazione del contributo apportato dai restanti \textit{spanning subgraph}. Tale contributo è identificato per semplicità da $X_2$, mentre la quantità derivante dai \textit{subgraph} a contributo maggiore è indicata da $X_1$. In particolare, il contributo dei \textit{subgraph} è dovuto al valore di $\lambda^{|edges(X)|_{max}}$: essendo $\lambda$ un reale compreso tra 0 ed 1 è ovvio che decresca al crescere dell'esponente. Proprio per questo, solo poche configurazioni apportano un contributo significativo, mentre ne esistono numerose aventi $\lambda^{|edges(X)|_{max}}$ molto basso a causa dell'esponente elevato.\\
+L'idea alla base del calcolo dell'approssimazione di $X_2$ consiste nel suddividere il resto dei sottografi in $k$ gruppi e calcolarne il contributo per ognuno di essi, così da avere una stima più precisa.\\
+Per ogni gruppo:
+\begin{itemize}
+	\item si conti $n_g$, il numero di elementi appartenenti al gruppo, (somma dei coefficienti binomiali da $start$ ad $end$)
+	\item si calcoli $m_g$, il massimo numero di edges nel gruppo
+	\item si valuti il minimo di $f_g$ nel gruppo, ottenuto in corrispondenza del minimo numero di edges o del massimo
+	\item si calcoli $n_g \cdot \lambda^m_g \cdot f_g$ e lo si sommi alla stima
+\end{itemize}
+Alla fine di tale processo la stima accumulata sarà pari ad $E|odd(X)|$.\\
+\begin{algorithm}
+	\caption{Approximate $X_2$}
+	\label{alg:approx_subgs}
+	\begin{algorithmic}[1]
+		\Procedure{Approximate\_Subgs}{$m, f, \lambda, k$}
+		\State $approx\_sum \gets 0$
+		\State $step \gets \frac{m - log(m)}{k}$
+		\For{$start\gets log(m) + 1\textbf{ to } m \textbf{ by } step$}
+			\If{$start + step \leq m$}
+				\State $end \gets start + step$
+			\Else
+				\State $end \gets m$
+			\EndIf
+			\State $n_g \gets 0$
+			\State $m_g \gets end$
+			\For{$j \gets start \textbf{ to } end$}
+				\State $n_g \gets n_g + \binom{m}{j}$
+			\EndFor
+			\State $f_g \gets min(f(start), f(end))$
+			\State $approx\_sum \gets approx\_sum + n_g \cdot \lambda^{m_g} \cdot f_g$
+		\EndFor
+		\State \textbf{return} $approx\_sum$
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+Di fondamentale importanza è la scelta di $k$, ovvero del numero di gruppi da creare: numerosi esperimenti hanno mostrato che la stima di $X_2$ si mantiene fissa ad un valore, a partire da un determinato $k$, in particolare ciò si verifica da $k = \frac{(m - log(m))}{2} + 1$ in poi. Quindi si è ritenuto opportuno fissare tale valore come numero di gruppi in cui suddividere i \textit{subgraph} in base al numero di archi, a partire da $log(m) + 1, log(m) + (m-log(m))/k$, aumentando di $(n-log(m))/k$, fino ad arrivare ad $m$.\\
+L'algoritmo di approssimazione \texttt{Approximate\_Subgs} [\ref{alg:approx_subgs}] necessita dei parametri di input $m$ e $\lambda$, mostrando quindi una dipendenza dall'algoritmo \texttt{Estimate\_F} [\ref{alg:est_f_threshold}], in quanto è quest'ultimo a restituire tali valori in output.\\
+Oltre a $\lambda$ ed $m$, l'algoritmo \texttt{Approximate\_Subgs} [\ref{alg:approx_subgs}] riceve in input anche la funzione da valutare agli estremi di ogni intervallo: tale funzione è $f(x) = 2x\cdot\mu^{2x}$.\\
+Quindi, la stima dinamica di $E|odd(X)|$, si riduce a
+\begin{algorithm}
+	\caption{Compute $E|odd(X)|$}
+	\label{alg:eoddx}
+	\begin{algorithmic}[1]
+		\Procedure{Compute\_E\_odd\_X}{$graph, threshold, m, k$}
+		\State $f(x) = 2x\cdot\mu^{2x}$
+		\State $summation, Z^{\prime}, \mu, \lambda \gets Estimate\_F(graph, threshold)$
+		\State $X_2 \gets Approximate\_Subgs(m, f, \lambda, k)$
+		\State $E|odd(X)|_{graph} \gets (summation + X_2) / Z^{\prime}$
+		\State \textbf{return} $E|odd(X)|_{graph}$
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+\subsection{Enumerazione degli spanning subgraph: algoritmo L}\label{ssec:l}
+Si analizza in questa sezione il modo in cui vengono efficacemente enumerate tutte le possibili configurazioni di un grafo.\\
+Come anticipato in precedenza, si è scelto di enumerare gli \textit{spanning-subgraph} in maniera analoga a come si enumerano le possibili sequenze di $n$ bit. Ad esempio, avendo un grafo $G = (V, E)$ rappresentato come sequenza di archi $G = [(1,2), (2,3), (3,1)]$, può avere $2^3$ possibili configurazioni, come visibile dalle righe della tabella \ref{tab:configs}.
+\begin{table}[]
+	\centering
+	\caption{Rappresentazione delle possibili configurazioni}
+	\label{tab:configs}
+	\begin{tabular}{|l|l|l|}
+		\hline
+		$(1,2,0)$ $(1,3,0)$ $(2,3,0)$ \\ \hline
+		$(1,2,0)$ $(1,3,0)$ $(2,3,1)$ \\ \hline
+		$(1,2,0)$ $(1,3,1)$ $(2,3,0)$ \\ \hline
+		$(1,2,1)$ $(1,3,0)$ $(2,3,0)$ \\ \hline
+		$(1,2,0)$ $(1,3,1)$ $(2,3,1)$ \\ \hline
+		$(1,2,1)$ $(1,3,0)$ $(2,3,1)$ \\ \hline
+		$(1,2,1)$ $(1,3,1)$ $(2,3,0)$ \\ \hline
+		$(1,2,1)$ $(1,3,1)$ $(2,3,1)$ \\ \hline
+	\end{tabular}
+\end{table}
+Esistono diversi modi per generare tutte le permutazioni di una data sequenza. Un classico algoritmo, che è allo stesso tempo semplice e flessibile, è basato sul trovare la prossima permutazione in ordine lessicografico, se esiste. Può gestire valori ripetuti, andando a generare i distinti sottoinsiemi di permutazioni per ognuno di essi. Anche per permutazioni semplici è significativamente più efficiente rispetto al generare i valori per il codice di Lehmer in ordine lessicografico (possibilmente utilizzando il sistema di numerazione fattoriale) e convertendo tali permutazioni. Per utilizzarle, è necessario ordinare la sequenza in maniera crescente (il che fornisce la sua permutazione minimale lessicografica), ed in seguito ripete, avanzando alla prossima permutazione fin quando ve n'è una. Questo metodo risale a Narayana Pandita, sviluppato nel \rom{14} secolo in India, ed è stato più volte riscoperto da allora, in particolare la versione utilizzata in questo lavoro è l'algoritmo detto \textit{``L''} descritto da Donald Knuth in \textit{``The Art of Computer Programming''} \cite{donald1999art}.
+\begin{algorithm}
+	\caption{Algorithm L}
+	\label{alg:l}
+	\begin{algorithmic}[1]
+		\Procedure{Unique\_Permutations}{$a$}
+		\State Trovare il maggior indice $k$ tale che $a[k] < a[k + 1]$.
+		\If{tale indice non esiste}
+			\State La permutazione è l'ultima
+		\EndIf
+		\State Trovare il maggior indice $l > k$ tale che $a[k] < a[l]$
+		\State Sostituire il valore $a[k]$ con quello di $a[l]$
+		\State Invertire la sequenza da $a[k + 1]$ fino ad $a[n]$ incluso
+		\State \textbf{return} $a$
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}

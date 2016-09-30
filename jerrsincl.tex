@@ -1,11 +1,11 @@
-Questo capitolo focalizza l'attenzione sul lavoro che ha gettato le fondamenta per lo sviluppo del e su cui si basa questa tesi e tanti altri lavori. L'articolo di cui si parla è ``\textit{Polynomial-time approximation algorithms for the Ising model}'', scritto da Mark Jerrum ed Alistair Sinclair nel 1993 \cite{jerrum1993polynomial}.\\
+Questo capitolo focalizza l'attenzione sul lavoro che ha gettato le fondamenta per lo sviluppo di questa area di ricerca e sulle quali si basa questa tesi e tanti altri lavori. L'articolo di cui si parla è ``\textit{Polynomial-time approximation algorithms for the Ising model}'', scritto da Mark Jerrum ed Alistair Sinclair nel 1993 \cite{jerrum1993polynomial}.\\
 In breve, \cite{jerrum1993polynomial} presenta un algoritmo randomizzato che calcola la partition function di un sistema di Ising ferromagnetico qualunque, con grado di accuratezza arbitrario. Il tempo di esecuzione di tale algoritmo è polinomiale nella taglia del sistema (i.e. il numero di siti) e variabile in base ad un parametro che controlla l'accuratezza del risultato.
 L'algoritmo si basa su una simulazione Monte Carlo di una catena di Markov ergodica opportunamente definita. Si può già anticipare che gli stati della catena non sono, come accade di solito, configurazioni di spin di Ising, ma spanning subgraph del grafo di interazione del sistema. Le performance dell'algoritmo sono garantite da prove rigorose e poggiano sulla proprietà di \textit{rapidly mixing} della catena di Markov: converge alla sua distribuzione d'equilibrio in un numero \textit{polinomiale} di passi.\\
 Si prosegue con l'analisi dettagliata dell'algoritmo proposto da Jerrum e Sinclair, descrivendo prima il modo con cui si trasforma il modello di Ising in un nuovo dominio, in cui le configurazioni sono spanning subgraph del grafo di interazione; prosegue con la costruzione di un \textit{fully polynomial randomised approximation scheme (fpras)} per il calcolo della partition function ed infine analizzando la catena di Markov definita sulle nuove configurazioni.\\
-Nei capitoli successivi, l'algoritmo proposto verrà identificato come ``\textit{algoritmo naive}''.
-\section{Spins world e Subgraphs world}
-L'obiettivo è costruire un algoritmo per il seguente problema:
-\textbf{Istanza}: una matrice reale simmetrica $(V_{ij} : i,j \in [n])$ delle energie di interazione, un numero reale B che rappresenta il campo esterno ed un numero reale positivo $\beta$.
+Nei capitoli successivi, l'algoritmo proposto verrà identificato come ``\textit{algoritmo JS}''.
+\section{Spins world e Subgraphs world}\label{subgworld}
+L'obiettivo è costruire un algoritmo per il seguente problema.\\
+\textbf{Istanza}: una matrice reale simmetrica $(V_{ij} : i,j \in [n])$ delle energie di interazione, un numero reale B che rappresenta il campo esterno ed un numero reale positivo $\beta$.\\
 \textbf{Output}: la partition function
 \begin{equation}
 	Z = Z(V_{ij}, B, \beta) = \sum_{\sigma}{exp(-\beta H(\sigma))},
@@ -57,7 +57,7 @@ Il seguente risultato classico \cite{newell1953theory} lega le due partition fun
 Tale teorema ha portato gli autori di questo lavoro a considerare un sistema della meccanica statistica le cui configurazioni sono \textit{spanning subgraph} di $([n], E)$. In seguito sarà definita una catena di Markov i cui stati sono queste configurazioni, e la cui distribuzione stazionaria assegna probabilità $\pi(X) = w(X)/Z^\prime$ alla configurazione $X$. questo processo, analizzato in dettaglio nella sezione \ref{sec:swp}, sarà dimostrato essere \textit{rapidly mixing} ed, inoltre, fornirà un mezzo efficiente per campionare le configurazioni con probabilità approssimativamente proporzionali ai loro pesi.\\
 Poiché $Z^\prime$ è una somma pesata delle configurazioni, ci si aspetta che tale procedura dia informazioni utili su $Z^\prime$ stessa e, di conseguenza, sulla partition function originale $Z$.\\
 Per la dimostrazione di tale teorema, riferirsi a \cite{jerrum1993polynomial} (pag. 1091).
-\section{Stima della Partition Function}
+\section{Stima della Partition Function}\label{sec:pf}
 Si analizza ora, e descrive, un \textit{efficiente} algoritmo di approssimazione per il calcolo della partition function $Z$ di un sistema di Ising ferromagnetico (definizione di ``algoritmo di approssimazione efficiente'' al paragrafo \ref{sec:approxalgo}).\\
 Gli autori dell'articolo assumono di trattare con un modello computazionale in cui l'aritmetica è effettuata con un'accuratezza perfetta ed in cui le operazioni aritmetiche e le funzioni standard (i.e. l'esponenziazione) abbiano costo unitario. Inoltre, la taglia dell'istanza del problema è data da $n$, cioè il numero di siti.\\
 Dato un sistema di Ising ferromagnetico $\langle\lambda_{ij}, \mu\rangle$  on $\lambda_{ij}$ e $\mu$ definiti nella sezione precedente in \ref{lamij} e \ref{mu}, sia $\Omega$ l'insieme di \textit{subgraphs-world configuration} e sia $\pi$ la distribuzione di probabilità su $\Omega$: $\pi(X) = w(X)/\sum_{X^{\prime}}{w(X^{\prime})} = w(X)/Z^{\prime}$, dove $w$ è la funzione peso definita in \ref{weightfunc}.
@@ -90,10 +90,200 @@ Il Lemma \ref{lem:gensteps} afferma chiaramente che, qualora si impiegasse tale 
 Si analizzi ora com'è possibile applicare tale tecnica per calcolare la partition function $Z(V_{ij}, V, \beta)$ richiamando anche il Teorema \ref{thm:zaz} della sezione precedente (ricordando che la funzione $A$ può essere calcolata direttamente). In accordo a tale teorema, ci si concentra principalmente sul calcolo di $Z^{\prime}$; il primo passo è quello di scrivere $Z^{\prime}$ esplicitamente in funzione di $\mu$ come segue:
 \begin{equation}
 	Z^{\prime} \equiv Z^{\prime} = \sum_{X \subseteq E}{\mu^{|odd(X)|}} \prod_{\{i,j\}\in X}{\lambda_{ij} = \sum_{k=0}^{\lfloor n/2 \rfloor}}{c_k\mu^{2k}}.
+	\label{zprimeeq}
 \end{equation}
 È importante notare che solo le potenze pari di $\mu$ devono essere incluse nella somma, poiché il numero di vertici di grado dispari nel sottografo $X$ è necessariamente pari (si veda il Teorema di Eulero). Pertanto, si considera $Z^{\prime}$ come un polinomio in $\mu^2$ con coefficienti
 \begin{equation}
 	c_k = \sum_{X:|odd(X)|=2k}{\prod_{\{i,j\}\in X}}{\lambda_{ij}}.
+	\label{coeffsck}
 \end{equation}
+Nel caso ferromagnetico, tutti i coefficienti $c_k$ sono positivi, pertanto $Z^{\prime}(\mu)$ è una funzione crescente in $\mu$.\\
+Chiaramente, i coefficienti $c_k$ dipendono da $\lambda_{ij}$ e di conseguenza dalle energie di interazione del sistema $V_{ij}$ e dal parametro $\beta$. Gli autori dell'algoritmo però considerano tali quantità come valori fissati, ed analizzano cosa accade quando si fa variare $\mu$. Nella terminologia dello \textit{spin world}, ciò corrisponde a sottomettere il sistema con interazioni fisse e con temperatura fissa ad un campo esterno variabile. Lo scopo di tale algoritmo, però, è quello di valutare la partition function dato uno specifico valore del campo esterno B; pertanto, ciò si riduce a valutare il polinomio $Z^{\prime}(\mu) = \sum{c_k\mu^{2k}}$ nel punto $\mu = tanh\beta B$.\\
+Il punto di partenza è l'osservazione che il valore di $Z^{\prime}(\mu)$ quando $\mu = 1$ può essere calcolato direttamente; per capire meglio ciò, è importante notare da \ref{zprimeeq} e \ref{coeffsck} che
+\begin{equation}
+	Z^{\prime}(1) = \sum_{k=0}^{\lfloor n/2\rfloor}{c_k} = \sum_{X \subseteq E}{\prod_{\{i.j\}\in X}}{\lambda_{ij}} = \prod_{\{i,j\}\in E}{(1 + \lambda_{ij})}.
+	\label{zprimeone}
+\end{equation}
+Vediamo ora com'è possibile collegare il valore desiderato $Z^{\prime}(tanh \beta B)$ al valore $Z^{\prime}(\mu)$ calcolati in alcuni punti intermedi: $tanh\beta B < \mu < 1$.\\
+Il meccanismo per legare i valori di $Z^{\prime}$ in due punti $\mu = \mu_0$ e $\mu = \mu_1$, con $1 \geq \mu_0 > \mu_1 \geq 0$, è il seguente: si consideri la variabile casuale $f(X) = (\mu_1/\mu_0)^{|odd(X)|}$ sulle configurazioni del sistema quando $\mu = \mu_0$. Il valore atteso di $f$ è dato da
+\begin{equation}
+	E_{\mu_0}(f) = \frac{1}{Z^{\prime}(\mu_0)}\sum_{k=0}^{\lfloor n/2 \rfloor}{c_k \mu_0^{2k}}\left(\frac{\mu_1}{\mu_0}\right)^{2k} = \frac{Z^{\prime}(\mu_1)}{Z^{\prime}(\mu_0)}.
+	\label{emu0f}
+-\end{equation}
+La notazione $E_{\mu_0}(f)$ indica che il valore atteso di $f$ è calcolato rispetto ad un particolare valore di $\mu$, in tal caso $\mu_0$. Come discusso precedentemente in questa sezione, la quantità $Z^{\prime}(\mu_1)/Z^{\prime}(\mu_0)$ può essere stimata utilizzando la tecnica di campionamento descritta. Per il Lemma \ref{lem:gensteps}, tale processo sarà efficiente a patto che il rapporto $max(f)/E_{\mu_0}(f)$ non assuma un valore troppo elevato; chiaramente, questo non può essere garantito per valori di $\mu_0$ e $\mu_1$ arbitrari, ma se tali valori sono ragionevolmente vicini tra loro, allora il rapporto è limitato da un valore piuttosto stretto.\\
+Gli autori dell'articolo provano questa affermazione nel seguente modo: innanzitutto, sicuramente $max(f) \leq 1$; è sufficiente, quindi, ottenere un \textit{lower bound} sul valore atteso $E_{\mu_0}(f)$. tale bound è fornito dal seguente Lemma:
+\begin{lem}
+	Siano $\mu_0$ e $\mu_1$ due numeri reali arbitrari nel range $[0,1]$ che soddisfano $\mu_1 < \mu_0 \leq \mu_1 + n^{-1}$. Allora il rapporto $Z^{\prime}(\mu_1)/Z^{\prime}(\mu_0)$ è limitato inferiormente da 1/10.
+	\label{lem:inflim}
+\end{lem}
+Una parte della dimostrazione di tale Lemma sarà analizzata nel capitolo successivo, per la prova completa si veda \cite{jerrum1993polynomial} (pag.1098).
+Il Lemma \ref{lem:inflim} suggerisce che è possibile portare il valore noto $Z^{\prime}(1)$ al valore desiderato $Z^{\prime}(tanh\beta B)$ effettuando esperimenti statistici su una sequenza di valori intermedi di $\mu$ che sono a distanza $n^{-1}$ l'uno dall'altro.
+Nello specifico, sia $r<n$ un numero naturale che soddisfa
+\begin{equation}
+	\frac{n-r}{n} > tanh\beta B \geq \frac{n - r - 1}{n},
+	\label{tanh}
+\end{equation}
+e sia la sequenza $(\mu_k)$ per $0 \leq k \leq r + 1$ definita da
+\begin{equation}
+	\mu_k = 
+	\begin{cases}
+		(n-k)/n, & \text{per}\ 0 \leq k \leq r\\
+		tanh\beta B, & \text{per}\ k = r + 1
+	\end{cases}
+	\label{muk}
+\end{equation}
+È importante notare che $\mu_k \in [0,1]$ e che $\mu_{k+1} < \mu_k \geq \mu_{k+1} + n^{-1}$. In accordo alla discussione precedente, si può stimare il rapporto $Z^{\prime}(\mu_{k+1})/Z^{\prime}(\mu_k)$ in maniera efficiente per ogni $k$. Ciò è sufficiente per produrre una stima di $Z^{\prime}(tanh\beta B)$, poiché si ha
+\begin{equation}
+	Z^{\prime}(tanh\beta B) = Z^{\prime}(1) \times \prod_{k=0}^{r}{\frac{Z^{\prime}(\mu_{k+1})}{Z^{\prime}(\mu_k)}}.
+	\label{zptanh}
+\end{equation}
+A questo punto, gli autori del lavoro formulano il loro algoritmo di approssimazione per la \textit{partition function Z}.\\
+Si assume che l'input dell'algoritmo consista di un sistema di Ising ferromagnetico nella forma $\langle V_{ij}, B, \beta\rangle$ e di un valore positivo reale $\epsilon \in [0,1]$ che specifica l'accuratezza desiderata; come di consueto, sia $\lambda_{ij} = tanh\beta V_{ij}$.
+\textit{Step 1}. Calcolare
+\begin{equation}
+	A = (2cosh\beta B)^{n}\prod_{\{i,j\}\in E}{cosh\beta V_{ij}}
+\end{equation}
+\begin{equation}
+	Z^{\prime}(1) = \prod_{\{i,j\} \in E}{(1 + \lambda_{ij})}.
+\end{equation}
+\textit{Step 2}. Definire la sequenza $(\mu_k)$ per $0 \leq k \leq r + 1$ in accordo a \ref{tanh} e \ref{muk}. Per ogni $k = 0, 1, \dots, r$ effettuare quanto segue:
+sia $f(X) = (\mu_{k+1}/\mu_k)^{|odd(X)|}$ una funzione per ogni subgraphs-world configuration $X$, tale che $E_{\mu_k}(f) = Z^{\prime}(\mu_{k+1})/Z^{\prime}(\mu_k)$.
+Utilizzando la tecnica del Lemma \ref{lem:gensteps} applicata al sistema quando $\mu = \mu_k$, con $\xi = \epsilon/2n$ ed $\eta = 1/4n$, calcolare una quantità $Y_k$ che soddisfi:
+$Pr(Y_k\text{ approssima } Z^{\prime}(\mu_{k+1})/Z^{\prime}(\mu_k)\text{ in un range } 1 + \epsilon/2n) \geq 1 - 1/4n$.
+\textit{Step 3}. Restituire il prodotto
+\begin{equation}
+	A \times Z^{\prime}(1) \times \prod_{k=0}^{r}{Y_k}.
+	\label{azy}
+\end{equation}
+\begin{thm}
+	L'algoritmo sopra descritto è un fpras per la partition function Z di un sistema di Ising ferromagnetico.
+	\label{thm:fpras}
+\end{thm}
+\textit{Prova}. L'output dell'algoritmo è il prodotto delle quantità $A$ e $Z^{\prime}(1)$ calcolate in maniera esatta nello \textit{Step 1}, insieme ad $r + 1 \leq n$ variabili casuali $Y_k$ derivanti dagli esperimenti nello \textit{Step 2}. Da \ref{zptanh} e dalla proprietà sulle $Y_k$ espressa nello \textit{Step 2}, risulta immediato che il prodotto approssima $Z(V_{ij}, B, \beta)$ in un range $(1 + \epsilon/2n)^n \leq 1 + \epsilon$ con probabilità almeno $(1 - 1/4n)^n \geq 3/4$. resta solo da dimostrare che il tempo di esecuzione dell'algoritmo è limitato da un polinomio in $n$ ed $\epsilon^{-1}$.\\
+\textit{Step 1} e \textit{Step 3} possono essere chiaramente eseguiti in tempo $O(n^2)$. Ora si consideri l'operazione dello \textit{Step 2} per un particolare valore di $k$; ricorrendo ai lemma \ref{lem:gensteps} e \ref{lem:inflim}, si può vedere che il processo per calcolare la stima di $Y_k$ richiede $N = 20160\epsilon^{-2}n^2\lceil lg4n \rceil$ chiamate al generatore del Teorema \ref{thm:gen}. Inoltre, la tolleranza richiesta per ogni chiamata è $\delta = \epsilon /160n$, ed il valore di $\mu$ non è mai inferiore ad $n^{-1}$; dal Teorema \ref{thm:gen} segue che il tempo di esecuzione per ogni chiamata è limitato da $q(n, \epsilon^{-1})$, per qualche polinomio $q(\cdot, \cdot)$. Il tempo totale di esecuzione dello \textit{Step 2} è quindi $O(nNq(n, \epsilon^{-1}))$, che è una funzione polinomiale in $n$ ed $\epsilon^{-1}$. L'algoritmo, quindi, soddisfa tutti i requisiti di un fpras. \qed\\
+È importante notare che il Teorema \ref{thm:gen} fornisce già un \textit{upper bound} sul polinomio $q$ che comprare alla fine della prova precedente. Da questo, è facile vedere che il tempo d'esecuzione totale del \textit{fpras} del Teorema \ref{thm:zaz} è $O(\epsilon^{-2}m^2n^{11}log\ n(log(\epsilon^{-1}n) + m))$.\\
+Si può assumere (w.l.o.g.) che $\epsilon \geq 2^{-m}$, poiché altrimenti si potrebbe calcolare $Z$ in maniera esatta attraverso algoritmi di \textit{forza bruta} in tempo $O(m\epsilon^{-1})$. Pertanto il polinomio del tempo d'esecuzione diventa $O(\epsilon^{-2}m^3n^{11}log\ n)$.
 \subsection{Prova del Lemma 4.2.1}\label{ssec:lemmaproof}
+Questa sezione è dedicata alla prova del Lemma \ref{lem:gensteps}. Tale prova ha giocato un ruolo cruciale nello sviluppo di questo lavoro di tesi, pertanto è stata dimostrata per intero e separatamente.\\
+Sia $Var(f)$ la varianza $f: Var(f) = E(f^2) - E(f)^2$.\\
+Il generatore Teorema \ref{thm:gen} seleziona gli elementi di $\Omega$ da una distribuzione $p$ che è leggermente differente da $\pi$. In accordo a ciò, la varianza e la media di $f$ definite nel rispetto di tale distribuzione sono pari a
+\begin{equation}
+	E^{\prime}(f) = \sum_{X \in \Omega}{p(X)f(X)};
+	Var^{\prime}(f) = \sum_{X \in \Omega}{p(X)f(X)^2 - E^{\prime}(f)^2}.
+	\label{efvarf}
+\end{equation}
+Poiché la \textit{variation distance} soddisfa $\|p-\pi\| \leq \delta$, si ha
+\begin{align}
+	|E(f) - E^{\prime}(f)| &\leq \delta max(f) = \xi E(f)/8\\
+	|Var(f) - Var^{\prime}(f)| &\leq 4\delta max(f)^2 = 3\xi E(f) max(f)/8.
+	\label{absefvarf}
+\end{align}
+Ora sia ${X_i}$ un insieme di campioni indipendenti di taglia $s$ prodotto dal generatore, e sia $Y_0 = s^{-1}\sum_i{f(X_i)} la media campionaria$.\\
+Chiaramente $Y_0$ ha valore atteso $E^{\prime}(f)$ e varianza $s^{-1}Var^{\prime}(f)$. Pertanto, applicando la disuguaglianza di Chebyshev \ref{chebyshev}, si ha
+\begin{equation}
+	Pr\left( \left|Y_0 - E^{prime}(f)\right| > \frac{\xi}{3}E^{\prime}(f)\right) \leq \frac{9}{\xi^2}\frac{Var^{\prime}(f)}{sE^{\prime}(f)^2}.
+	\label{pryef}
+\end{equation}
+Ma, se $|Y_0 - E^{\prime}(f)| \leq \frac{\xi}{3}E^{\prime}(f)$ allora, da \ref{absefvarf},
+
+\begin{align}
+	\begin{split}
+	|Y_0 - E(f)| &\leq |Y_0 - E^{\prime}(f)| + |E^{\prime}(f) - E(f)|\\
+				 &\leq \frac{\xi}{3}E^{\prime}(f) + \frac{\xi}{8}E(f)\\
+				 &\leq \frac{\xi}{3}\left(1 + \frac{\xi}{8}\right)E(f) + \frac{\xi}{8}E(f)\\
+				 &\leq \frac{\xi}{2}E(f).
+	\end{split}
+	\label{y0e}
+\end{align}
+Da notare che questo, a sua volta, implica che $Y_0$ approssima $E(f)$ in un range $1 + \epsilon$.\\
+inoltre, riapplicando \ref{absefvarf} si ha
+\begin{equation}
+	\frac{Var^{\prime}(f)}{E^{\prime}(f)} \leq \frac{Var(f) + \frac{\xi}{8}E(f)max(f)}{\left(\frac{7}{8}E(f)\right)^2} \leq \frac{\frac{11}{8}E(f)max(f)}{\left(\frac{7}{8}E(f)\right)^2} < \frac{2max(f)}{E(f)},
+	\label{vardive}
+\end{equation}
+dove nella seconda disuguaglianza è stato utilizzato il bound indipendente dalla distribuzione $Var(f) \leq E(f)max(f)$, valido per qualsiasi variabile casuale non negativa $f$.\\
+Combinando \ref{y0e} e \ref{vardive} con \ref{pryef} e scegliendo la taglia dei campioni
+\begin{equation}
+	s = 72\xi^{-2}max(f)/E(f),
+	\label{samplesize}
+\end{equation}
+si ha
+\begin{equation}
+	Pr(Y_0 \text{ non approssima } E(f) \text{ in un range } 1 + \xi) \leq \frac{18}{\xi^2s}\frac{max(f)}{E(f)} = \frac{1}{4}.
+	\label{prnotinrange}
+\end{equation}
+Ora si consideri l'esecuzione dell'esperimento appena descritto, un numero $t$ di volte indipendenti e sia $Y$ la mediana dei risultanti $t$ valori di $Y_0$. In vista di \ref{prnotinrange}, la probabilità che $Y$ fallisca nell'approssimare $E(f)$ in un range $\ + \xi$ è al più
+\begin{align}
+	\sum_{i=(t+1)/2}^{t}{\binom{t}{i}\left(\frac{1}{4}\right)^i\left(\frac{3}{4}\right)^{t-i}} &\leq\nonumber\\ \left(\frac{1}{4}\right)^{\frac{t}{2}}\left(\frac{3}{4}\right)^{\frac{t}{2}}\sum_{i=(t+1)/2}^{t}{\binom{t}{i}} &\leq\nonumber\\
+	\left(\frac{3}{16}\right)^{\frac{t}{2}}2^t = \left(\frac{3}{4}\right)^{\frac{t}{2}}.
+	\label{pryfail}
+\end{align}
+Scegliendo
+\begin{equation}
+	t = 6\lceil lg \eta^{-1}\rceil + 1,
+	\label{t}
+\end{equation}
+tale probabilità è limitata superiormente da $\eta^{3\lceil lg(\frac{4}{3})\rceil} < \eta$. La variabile casuale $Y$ pertanto soddisfa i requisiti del Lemma \ref{lem:gensteps}.\\
+Il numero totale di campioni richiesti dal generatore è $s \cdot t$, che è limitato superiormente da $504\xi^{-2}\lceil lg\,\eta^{-1}\rceil max(f)/E(f)$.\qed
 \section{Analisi del subgraphs-world process} \label{sec:swp}
+In questa sezione si presenta il \textit{subgraphs-world process} ed il relativo algoritmo per simulare la catena di Markov ergodica opportunamente definita. Inoltre saranno enunciati (ed alcuni anche dimostrati) i teoremi principali che hanno portato al raggiungimento di questo risultato.\\
+Sia $\mu > 0$. Prendendo spunto dalla forma che $Z^{\prime}$ assume in \ref{zprime}, si definisce il \textit{subgraphs-world process} $\mathcal{MC}_{Ising}$ come segue.\\
+Lo \textit{spazio degli stati} $\Omega$ della catena di Markov $\mathcal{MC}_{Ising}$ è l'insieme di tutti gli \textit{spanning subgraph} $X \subseteq E$; da notare che $|\Omega| = 2^m$, dove $m = |E|$ è il numero di coppie non ordinate ${i,j}$ con $\lambda_{ij} \neq 0$.\\
+Dati $X, X^{\prime} \in E$ con $X \neq X^{\prime}$, la \textit{probabilità di transizione} da $X$ a $X^\prime$ è data da
+\begin{equation}
+	p(X, X^\prime) =
+	\begin{cases}
+		1/2m, & \text{ se } |X \oplus X^\prime| = 1 \text{ e } w(X^\prime) \geq w(X)\\
+		w(X^\prime)/2mw(X), & \text{ se } |X \oplus X^\prime| = 1 \text{ e } w(X^\prime) < w(X);\\
+		0, & \text{altrimenti.}
+	\end{cases}
+	\label{pxxp}
+\end{equation}
+dove $X \oplus X^\prime$ denota la differenza simmetrica di $X$ ed $X^\prime$.
+Le \textit{transizioni} in $\mathcal{MC}_{Ising}$ sono perturbazioni in cui un singolo arco può essere aggiunto o cancellato da un sottografo.\\
+Gli autori dell'articolo, a questo punto, definiscono un algoritmo per simulare la catena appena descritta:\\
+supponiamo che lo stato corrente della catena sia $X \in \Omega$; allora, le transizioni da $X$ possono essere scelte in accordo al seguente modello:
+\begin{enumerate}
+	\item Con probabilità 1/2 porre $X^\prime = X$, altrimenti
+	\item Scegliere un arco $e \in E$ in maniera uniformemente casuale, e sia $Y = X \oplus {e}$ la differenza simmetrica di $X$ ed ${e}$;
+	\item Se $w(Y) \geq w(X)$ allora porre $X^\prime = Y$; se $w(Y) < w(X)$ allora con probabilità $w(Y)/w(X)$ porre $X^\prime = Y$, altrimenti $X^\prime = X$.
+\end{enumerate}
+È importante notare che non c'è bisogno di calcolare le funzioni peso $w(X)$ e $w(Y)$ da capo ad ogni iterazione: poiché $X$ ed $Y$ differiscono per un solo arco, il quoziente $w(Y)/w(X)$ può essere calcolato utilizzando solo due prodotti. La catena di Markov $\mathcal{MC}_{Ising}$ e \textit{irriducibile} ed \textit{aperiodica}; pertanto vi è una distribuzione stazionaria ben definita su $\Omega$ che è indipendente dallo stato iniziale. Sia $\pi : \Omega \rightarrow \mathcal{R}$ definita da $\pi(X) = w(X)/\sum_{X^\prime}{w(X^\prime)} = w(X)/Z^{\prime}$. gli autori a questo punto dimostrano che $\pi$ così definita è una distribuzione stazionaria su $\Omega$: per $X, X^\prime \in \Omega$, sia $q(X, X^\prime) = \pi(X)p(X, X^\prime)$, $q$ è simmetrica nei suoi due argomenti. Se $X = X^\prime$ allora non vi è nulla da provare; se $|X \oplus X^\prime| > 1$, allora $p(X, X^\prime) = 0$ e di conseguenza $q(X, X^\prime) = 0$. Infine, è chiaro verificare dalla definizione di probabilità di transizione $p(X, X^\prime)$ che
+\begin{equation}
+	q(X, X^\prime) = (2m)^{-1}min\lbrace \pi(X), \pi(X^\prime)\rbrace , \text{ se } |X \oplus X^\prime| = 1.
+\end{equation}
+Poiché $q$ è simmetrica, allora vale la cosiddetta condizione del \textit{detailed balance}:
+\begin{equation}
+	\pi(X)p(X, X^\prime) = q(X, X^\prime) = \pi(X^\prime)p(X^\prime, X).
+	\label{detbal}
+\end{equation}
+Supponiamo, così com'è in questo caso, che la funzione $p(\cdot, cdot)$ descriva le probabilità di transizione di una catena di Markov ergodica: come precedentemente affermato nella sezione \ref{ssec:stazdist}, se vi è una qualsiasi funzione $\pi : \rightarrow \mathcal{R}$ che soddisfa la condizione \ref{detbal} insieme alla condizione di normalizzazione $\sum_{X\in\Omega}{\pi(X) = 1}$, allora la catena di Markov è \textit{reversibile} e $\pi$ è la sua distribuzione stazionaria. Pertanto, la distribuzione stazionaria della catena di Markov $\mathcal{MC}_{Ising}$ è data da $\pi(X) = w(X)/Z^\prime$, come affermato precedentemente, e quindi si può utilizzare tale catena per campionare le configurazioni $X \in \Omega$ con probabilità approssimativamente proporzionali a $w(X)$.\\
+Come spiegato informalmente prima, se la catena di Markov $\mathcal{MC}_{Ising}$ viene utilizzata come base per un'efficiente procedura di campionamento per le configurazioni allora deve per forza essere \textit{rapidly mixing}: si avvicina all'equilibrio dopo un numero polinomiale di passi. Inoltre, se è possibile per tale catena evolvere, a partire da uno stato iniziale appositamente definito, allora la distribuzione nello stato finale sarà molto vicina alla distribuzione stazionaria, dopo aver effettuato solo un numero polinomiale di passi. Da notare che questo è un requisito non banale: poiché il numero degli stati nella catena è esponenzialmente grande, gli autori dell'articolo chiedono che questo converga dopo aver visitato solo una piccola frazione del suo spazio degli stati.\\
+L'argomento che loro propongono per dimostrare che la catena è \textit{rapidly mixing} si divide in due parti \ref{thm:vardist}, in cui stimano la conduttanza di $\mathcal{MC}_{Ising}$. Data una catena di Markov ergodica reversibile, la \textit{conduttanza} \cite{sinclair2012algorithms}, \cite{sinclair1989approximate} è definita da:
+\begin{equation}
+	\Phi = min \lbrace \sum_{X\in S \text{and} X^\prime \notin S}{q(X, X^\prime)/\sum_{X\in S}{\pi(X)}}\rbrace
+	\label{conductance}
+\end{equation}
+dove la minimizzazione avviene su tutti i sottoinsiemi $S$ degli stati con $0 < \sum_{X\in S}{\pi(X)} \leq 1/2$ e $0 < \Phi \leq 1$.\\
+Una catena con valore di conduttanza grande ha minor probabilità di ``restare bloccata'' in una qualsiasi regione piccola dello spazio degli stati, quindi ci si aspetta che converga velocemente. Tale intuizione viene utilizzata nel seguente teorema:
+\begin{thm}
+	\label{thm:vardist}
+	Sia $\Phi$ la conduttanza stazionaria $\pi$ e $min_X\,p(X,X) \geq 1/2$. Sia $p^{(t)}$ la distribuzione dello stato al tempo t, dato che lo stato iniziale è $X_0$. Allora la variation distance $\|p^{(t)} - \pi\|$ soddisfa
+\end{thm}
+\begin{equation}
+	\|p^{(t)} - \pi\| \leq \frac{(1 - \Phi^2)^t}{\pi(X_0)}.
+	\label{vardistbound}
+\end{equation}
+Per la prova riferirsi a \cite{jerrum1993polynomial} (pag. 1100).\\
+Il Teorema \ref{vardistbound} permette di analizzare il rate di convergenza di una catena reversibile esaminando la sua struttura di transizione, come si riflette nella conduttanza. In particolare, se si riesce ad assicurare una \textit{variation distance} al più pari a $\delta$ allora è chiaro che sono sufficienti $\Phi^{-2}(ln \delta^{-1} + ln \pi(X_0)^{-1})$ passi. Pertanto, la proprietà di \textit{rapid mixing} generalmente segue da un \textit{lower bound} polinomiale inverso sulla conduttanza. Tale bound è disponibile per la catena $\mathcal{MC}_{Ising}$ definita prima, nello specifico, si ha il seguente teorema:
+\begin{thm}
+	\label{thm:inflimcond}
+	La conduttanza della catena di Markov $\mathcal{MC}_{Ising}$ è limitata inferiormente da $\mu^4/4m$.
+\end{thm}
+La prova completa è disponibile in \cite{jerrum1993polynomial} (pag. 1101).\\
+A questo punto è possibile analizzare la prova del Teorema \ref{thm:gen}, enunciato ed utilizzato nella sezione precedente.
+\emph{Prova del Teorema \ref{thm:gen}}. Il generatore opera come segue: dato in input un sistema di Ising ferromagnetico nella forma $\langle\lambda_{ij}, \mu\rangle$, con $0 < \mu \leq 1$ ed una tolleranza $\delta \in \left( 0,1 \right]$, simula la catena di Markov associata $\mathcal{MC}_{Ising}$ per $16m^2\mu^{-8}(ln \delta^{-1} + m)$ passi, iniziando nello stato $X_0 = \emptyset$. Poiché $\lambda_{ij} < 1$ per tutti $i, j$ e $\mu \leq 1$, è chiaro che $w(X_0) \geq w(X)$ per ogni configurazione $X$; pertanto $\pi(X_0) \geq 2^{-m}$. Ricorrendo al Teorema \ref{thm:vardist}, gli autori concludono che il numero specificato di passi è sufficiente per assicurare una \textit{variation distance} pari al più a $\delta$. \qed
+\subsection{Miglioramenti Precedenti}
+Nel lavoro \cite{rinaldi2016approximation}, Rinaldi raggiunge l'obiettivo di computare la funzione di partizione Z in tempo polinomiale basandosi su quanto mostrato da Jerrum e Sinclair: l'intuizione è quella di far girare un'altra dinamica che goda di due importanti proprietà, ovvero la convergenza ``rapida'' alla distribuzione stazionaria ed il poter utilizzare tale stazionaria per calcolare quella di nostro interesse. Tale dinamica è quella del \textit{subgraphs-world process} proposta in \cite{jerrum1993polynomial}.\\
+Il lavoro di Rinaldi, si mostra corretto, ma non utilizzabile nella vita reale a causa dei tempi d'esecuzione proibitivi, tuttavia pone le basi per ulteriori sviluppi e miglioramenti.\\
+L'analisi della prova del Lemma \ref{lem:gensteps}, descritta nella sezione \ref{ssec:lemmaproof}, ha portato alla conclusione che i \textit{bound} definiti in tale prova possono essere migliorati, e di conseguenza, andare a migliorare i valori di $s$ e $t$, poiché dipendenti solo da tali \textit{bound}. Così facendo è possibile ridurre il numero di passi impiegati dall'algoritmo, e quindi il suo \textit{running time}.

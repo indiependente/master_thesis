@@ -1,6 +1,118 @@
-\section{Stato dell'arte}
-\subsection{Miglioramenti Rinaldi}
-\subsection{Esperimenti}
+L'idea sviluppata da Jerrum e Sinclair in \cite{jerrum1993polynomial} apre la strada alla possibilità di calcolare la \textit{partition function}, quindi analizzare la \textit{Logit dynamics}, in contesti reali. Infatti il loro lavoro mostra il primo algoritmo di approsimazione \textit{dimostrabilmente efficiente}, per il calcolo della partition function $Z$ di un sistema di Ising arbitrario. Tale algoritmo, però, non è sufficientemente scalabile ed utilizzabile solo su reti di piccole dimensioni, come dimostrato in \cite{rinaldi2016approximation}.\\
+Il significato di \textit{efficienza}, infatti, per gli autori è inteso come complessità \textit{polinomiale} nella dimensione dell'input del problema, cioè gli $n$ siti del sistema.\\
+Tale affermazione è sostenuta dalla dimostrazione del Teorema \ref{thm:fpras}, il quale termina con la prova che il tempo totale di esecuzione dell'algoritmo che propongono per calcolare $Z$ è pari a $O(\epsilon^{-2}m^3n^{11}log n)$.\\
+Come evidenziato dal Teorema \ref{thm:gen}, il tempo d'esecuzione del generatore è pari a $O(m^2\mu^{-8}(log\delta^{-1} + m))$. Quindi, considerando l'algoritmo per il calcolo di $Z$, e tenendo presente che $\mu \geq 1/n$ e $\delta \geq \epsilon/n$, il tempo d'esecuzione del generatore in questo caso è $O(m^2n^8(log(\epsilon^{-1}n) + m))$.\\
+Si analizzi ora la complessità dei singoli passi dell'algoritmo descritti nella sezione \ref{sec:pf}. \textit{Step1} e \textit{Step3} hanno una complessità pari ad $O(n^2)$, mentre quella di \textit{Step2} è limitata da un polinomio in funzione di $n$ ed $\epsilon^{-1}$. L'assunzione $\epsilon \geq 2^{-m}$ che il Teorema \ref{thm:fpras} effettua, si ottiene la seguente relazione: $\epsilon \geq 2^{-m} \geq log\left(\frac{1}{1/2^m}\right) = log 2^m = m\,log2$. Congiungendo i \textit{bound} trovati, si arriva alla complessità finale dell'algoritmo enunciata nella prova del Teorema \ref{thm:fpras}.\\
+Grazie a questo risultato, è possibile utilizzare l'algoritmo per il calcolo di $Z$, considerando il \textit{running time} polinomiale nel numero di siti. Nonostante tale complessità polinomiale, il tempo d'esecuzione resta comunque ``alto'' anche per sistemi con un piccolo numero di nodi.\\
+L'obiettivo di questo lavoro di tesi, descritto nel corrente capitolo, è analizzare l'algoritmo proposto da Jerrum e Sinclair ed intervenire dove possibile così da ridurre il tempo d'esecuzione totale.
+\section{I parametri $\xi$ ed $\eta$}
+L'algoritmo proposto per il calcolo di $Z$, presenta, tra i parametri dello \textit{Step 2}, due quantità definite come
+\begin{equation}
+	\xi = \epsilon/2n \text{ ed } \eta = 1/4n.
+	\label{xieta}
+\end{equation}
+Questi valori si ripresentano nella prova del Lemma \ref{lem:gensteps}, descritta nella sezione \ref{ssec:lemmaproof}, $\xi$ in particolare si ritrova nel calcolo di $s$ in \ref{samplesize} ed $\eta$ nel calcolo di $t$ in \ref{t}.
+Considerando che $s$ è la taglia dell'insieme dei campioni di configurazioni da calcolare, utilizzando il generatore in \ref{sec:swp}, e $t$ è il numero di volte in cui gli esperimenti devono essere ripetuti, e ricordando che l'algoritmo per il calcolo di $Z$, in particolare lo \textit{Step 2}, si avvale di tale processo per calcolare le quantità $Y_k$, migliorare i valori di $\xi$ ed $\eta$ comporta un miglioramento nel numero di passi che l'algoritmo deve eseguire.\\
+Si consideri la prova del Teorema \ref{thm:fpras}: dagli esperimenti dello \textit{Step 2} risultano $r + 1 \leq n$ variabili casuali $Y_k$. Riprendendo l'equazione \ref{zptanh} e l'enunciato del Teorema \ref{thm:zaz}, si ha
+\begin{equation}
+	Z = A \times Z^{\prime}(1) \times \prod_{k=0}^{r}{Y_k}
+	\label{zazuno}
+\end{equation}
+di conseguenza, gli autori dell'articolo affermano (avvalendosi dell'enunciato del Lemma \ref{lem:gensteps}) che tale prodotto approssima $Z$ in un range $(1 + \epsilon/2n)^{n} \leq 1 + \epsilon$ con probabilità almeno $(1 - 1/4n)^{n} \geq 3/4$.\\
+Tale bound in realtà può essere migliorato: infatti, come è mostrato in \cite{rinaldi2016approximation}, è facile notare che gli autori assumono che il passo \textit{``r-esimo''} dei $k$ passi da effettuare nello \textit{Step 2} sia in realtà il passo \textit{``n-esimo''}, per cui $r$ è limitato superiormente da $n$ ed utilizzano tale limite nel calcolo delle probabilità e dei valori. Quindi, è possibile migliorare $\xi$ ed $\eta$ definendoli come segue
+\begin{equation}
+	\xi = \epsilon/2r \text{ ed } \eta = 1/4r.
+	\label{xietar}
+\end{equation}
+Poiché $r < n$ e si trova al denominatore, i valori di conseguenza aumentano, andando a migliorare il numero di iterazioni $st$ necessarie allo \textit{Step 2} per ottenere $Y_k$.
+\section{Stima del valore atteso}
+Nel capitolo precedente, data una variabile casuale $f$ ed una distribuzione di probabilità $\pi$ su $\Omega$, è stato definito in \ref{e_f}. Inoltre, si mostra come sia possibile ottenere una stima di tale valore atteso: è sufficiente costruire un insieme di taglia $s$ di configurazioni utilizzando il generatore del Teorema \ref{thm:gen}, e calcolare la \textit{media campionaria} di $f$ definita su tali valori. Per riuscire ad ottenere un risultato quanto più accurato possibile, si può ripetere tale esperimento un numero $t$ di volte e calcolare la \textit{mediana} dei $t$ risultati. Il Lemma \ref{lem:gensteps} fornisce i valori appropriati di $s$ e $t$ per effettuare tali esperimenti.\\
+L'algoritmo per il calcolo di $Z$, ed in particolare lo \textit{Step 2}, si avvale di tale processo per calcolare le quantità $Y_k$ che approssimano i valori attesi $E_{\mu_k(f)}$, con $f$ opportunamente definita.
 
-\section{Stima della Partition Function}
-\subsection{Numero di steps}
+\section{Stima della Partition Function}\label{sec:mypf}
+A differenza del lavoro proposto da Jerrum e Sinclair, il teorema \ref{thm:vardist} qui non è utilizzato. Tale teorema, consente di investigare il tasso di convergenza di una catena reversibile, esaminando la sua struttura di transizione, come pensato nella conduttanza. In particolare, se si vuole assicurare una \textit{variation distance} di al più $\delta$ allora è chiaro che $\Phi^{-2}(ln\,\delta^{-1} + ln\,\pi(X_0)^{-1})$ passi siano sufficienti.\\
+Usando invece la definizione di $t_{rel}$, il Teorema 2.3, Teorema 3.1 e Teorema 2.6 del lavoro \cite{auletta2011convergence}, invece è possibile affermare che $t_{mix}$ è al più $\rho(ln\,\delta^{-1} + ln\,\pi(X_0)^{-1})$.\\
+\paragraph{Metodi Spettrali.} Sia $P$ la matrice di transizione di una catena di Markov con stato degli spazi finito $\Omega$ e siano etichettati gli autovalori di $P$ in ordine non-crescente
+\begin{equation}
+	\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_{|\Omega|}.\nonumber
+\end{equation}
+È noto che $\lambda_1 = 1$ e, se $P$ è ergodica allora $\lambda_2 < 1$ e $\lambda_{|\Omega|} > -1$. Si denoti con $\lambda^*$ il maggior valore assoluto tra gli autovalori a parte $\lambda_1$. Il \textit{relaxation time} $t_{rel}$ di una catena di Markov ergodica $\mathcal{M}$ è definito come
+\begin{equation}
+	t_{rel} = \frac{1}{1 - \lambda^*} = \lbrace \frac{1}{1 - \lambda_2}, \frac{1}{1 + \lambda_{|\Omega|}}\rbrace.\nonumber
+\end{equation}
+Il tempo di rilassamento è collegato al mixing time dal Teorema 2.3 riportato di seguito.
+\begin{thm}
+	[2.3] (Relaxation Time). Sia P la matrice di transizione di una catena di Markov ergodica reversibile, con spazio degli stati $\Omega$ e distribuzione stazionaria $\pi$. Allora
+	\begin{equation}
+		(t_{rel} - 1) \cdot log\,\left(\frac{1}{2\epsilon}\right) \leq t_{mix}(\epsilon) \leq t_{rel} \cdot log\left(\frac{1}{\epsilon \pi_{min}}\right),
+	\end{equation}
+	dove $\pi_{min} = min_{x\in\Omega}\pi(x)$.
+\end{thm}
+Il Teorema 3.1 afferma che il secondo autovalore della matrice di transizione della catena di Markov della logit dynamics con \textit{inverse noise} $\beta$ per un gioco di potenziale è sempre maggiore in valore assoluto dell'ultimo autovalore. Quindi, per questi giochi, $t_{rel} = \frac{1}{1 - \lambda_2}$.\\
+\begin{thm}
+	[3.1] Sia $\mathcal{G}$ un gioco di potenziale ad n giocatori con spazio dei profili S e sia P la matrice di transizione della catena di Markov della logit dynamics con inverse noise $\beta$ per $\mathcal{G}$. Siano $1 = \lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_{|S|}$ gli autovalori di P. Allora $\lambda_2 \geq |\lambda_|S||$.
+\end{thm}
+Per maggiori dettagli sulla prova, consultare \cite{auletta2011convergence} (pag. 8).\\
+Il Teorema 2.6 è un caso speciale del \textit{Path Comparison Theorem} ottenuto considerando una catena di Markov $\mathcal{M}$ con distribuzione stazionaria $\pi$ ed una catena di Markov $\hat{\mathcal{M}}$ con probabilità di transizione $\hat{P}(x,y) = \pi(y)$.
+\begin{thm}
+	[2.6](Canonical paths). Sia $\mathcal{M}$ una catena di Markov ergodica reversibile definita sullo spazio degli stati $\Omega$ con matrice di transizione $P$ e distribuzione stazionaria $\pi$. Per ogni coppia di profili $x, y \in \Omega$, sia $\Gamma_{x,y}$ un $\mathcal{M}$-path. La congestione $\rho$ dell'insieme di path è definito come
+	\begin{equation}
+		\rho = max_{e\in E}\left(\frac{1}{Q(e)}\sum_{x,y: e\in\Gamma_{x,y}}\pi(x)\pi(y)|\Gamma_{x,y}|\right).
+	\end{equation}
+	È possibile affermare che $\frac{1}{1 - \lambda_2} \leq \rho$.
+\end{thm}
+Inoltre, mentre in \cite{jerrum1993polynomial} viene utilizzato il Teorema 7 per dare un limite superiore alla $\Phi$ che compare nella formula, ora è necessario dare un \textit{bound} alla $\rho$ che compare nella nuova formula.\\
+Per calcolare tale \textit{bound} si utilizza un approccio che unisce la prova del Teorema 5.1 di \cite{auletta2011convergence} e la prova del Teorema 7 di \cite{jerrum1993polynomial}. Il primo passo effettuato nel Teorema 5.1 è quello di definire un ordine arbitrario di oggetti (in quel caso vertici di un grafo), in questo lavoro viene definito allo stesso modo sugli archi.\\
+%ordine sugli archi
+Sia $l$ un ordinamento degli archi $\{1, 2, \cdots, n\}$ di $G$ e siano rinominati così che $1 <_l 2 <_l \cdots <_l n$.
+In seguito, il Teorema 5.1 definisce per ogni due stati della catena un \textit{canonical path} tra di essi. La stesso viene effettuato sulla catena di Markov che caratterizza questo lavoro. In particolare il canonical path definito è esattamente quello definito da \cite{jerrum1993polynomial} all'inizio del Teorema 7.
+Per ogni coppia di stati $I, F \in \Omega$, è specificato un \textit{canonical path} da $I$ (lo stato iniziale) ad $F$ (lo stato finale). Il \textit{canonical path} procede attraverso un numero di stati intermedi utilizzando solamente transizioni valide della catena di Markov. Ad ogni \textit{canonical path} è assegnato un peso che è il prodotto delle probabilità stazionarie allo stato iniziale e finale; quindi il peso del path da $I$ ad $F$ è $\pi(I)\pi(F)$, a prescindere dagli stati intermedi del path.
+% dimostrare iniettività di eta_T->T'
+Un'altra cosa che avviene nel Teorema 5.1 consiste nel mostrare l'iniettività della funzione $f_e$ (Lemma 5.3). In questo lavoro la funzione da considerare non è $f_e$ ma la funzione $\eta_{T \rightarrow T^\prime}$.\\
+Per prima cosa è necessario definire un'applicazione iniettiva dall'insieme dei \textit{canonical path} usando una data transizione che porti ad $\Omega$. Da tenere a mente che $cp(T, T^\prime)$ denota l'insieme di tutte le coppie $(I, F) \in \Omega^2$ tali che il \textit{canonical path} da $I$ ad $F$ impieghi la transizione $T \rightarrow T^\prime$. Si definisca l'applicazione $\eta_{T \rightarrow T^\prime} : cp(T, T^\prime) \rightarrow \Omega$ con $\eta_{T \rightarrow T^\prime}(I, F) = I \oplus F \oplus (T \cup T^\prime)$ per ogni $(I, F) \in cp(T, T^\prime)$.\\
+È possibile verificare che $\eta_{T \rightarrow T^\prime}$ sia iniettiva dimostrando che $I$ ed $F$ sono unicamente determinate da $U = \eta_{T \rightarrow T^\prime}(I, F)$. Infatti, dato $U$, è possibile computare $U \oplus (T \cup T^\prime) = I \oplus F$ e quindi il covering unicamente definito $C_1, C_2, \ldots, C_r$ di $I \oplus F$. L'arco $e = T \oplus T^\prime$, aggiunto o eliminato dalla transizione $T \rightarrow T^\prime$, mostra quale percorso, $C_i$, è stato \textit{``rilassato''}, e quanto il rilassamento di $C_i$ ha progredito. A partire dallo stato $T^\prime$, si potrebbe completare il rilassamento di $C_i$ ed i consecutivi percorsi così da scoprire lo stato finale $F$; allo stesso modo, sarebbe possibile utilizzare il processo inverso per recuperare lo stato iniziale $I$. Quindi l'applicazione $\eta_{T \rightarrow T^\prime}$ è iniettiva, come affermato.\qed\\
+L'ultimo passo effettuato dal Teorema 5.1 in \cite{auletta2011convergence} è provare il Lemma 5.2. Quest'ultimo afferma che
+\begin{lem}
+	[5.2] Per ogni coppia di profili \textbf{x, y} $\in S$, per ogni ordinamento $l$ dei vertici di $G$ e per ogni arco $(u, v) \in \Gamma^l_{x,y}$,
+	\begin{equation}
+		\frac{\pi(x)\cdot\pi(y)}{min\{\pi(u), \pi(v)\}} \leq e^{\beta|E_i^l|(\delta_1 + \delta_0)}\pi(z),
+	\end{equation}
+	dove \textbf{z} = $f_{u,v}^l(x,y)$ ed $i$ è la componente in cui i profili \textbf{u} e \textbf{v} differiscono.
+\end{lem}
+L'equazione 25 del lavoro \cite{jerrum1993polynomial} ha una forma molto simile a quella appena presentata dal Lemma riportato sopra, fatta eccezione per il termine $e^{\beta|E_i^l|(\delta_1 + \delta_0)}\pi(z)$ che è sostituito da $\mu^{-4}$, infatti l'equazione 25 si presenta come segue:
+per ogni istanza di applicazione $U = \eta_{T \rightarrow T^\prime}(I, F)$ è richiesto che
+\begin{equation}
+	w(U)w(T) \geq \mu^{-4}w(I)w(F) \text{ e } w(U)w(T^\prime) \geq \mu^{-4}w(I)w(F).
+\end{equation}
+Ora è possibile calcolare il \textit{bound} su $\rho$ così come mostrato nella prova del Lemma 5.4 di \cite{auletta2011convergence}.
+Si afferma quindi che
+\begin{equation}
+	\rho(\Gamma^l) \leq 2m^2\mu^{-4}w(I)w(F).
+	\label{eq:newbound}
+\end{equation}
+\textit{Prova.} A partire da
+\begin{equation}
+	P(u,v) = \frac{1}{m}\frac{e^{-\beta\phi(v)}}{e^{-\beta\phi(v)} + e^{-\beta\phi(u)}} \geq \frac{e^{-\beta\,min\{\phi(u), \phi(v)\}}}{2m}
+\end{equation}
+è possibile affermare che
+\begin{equation}
+	Q(u,v) \geq \frac{min\,\{\pi(u), \pi(v)\}}{2m}.
+\end{equation}
+Quindi,
+\begin{align*}
+	&\rho(\Gamma^l) = \max_{\mathcal{M} - edge(u,v)} 
+	\left( \frac{1}{Q(u,v)}\,\sum_{x,y: (u,v)\in\Gamma^\star_{x,y}}{\pi(x)\cdot\pi(y)\cdot|\Gamma_{x,y}^l|} 
+	\right)\\
+	&\text{(per l'equazione 18 e }|\Gamma_{x,y}^l|\leq m\text{)}\\
+	&\leq \max_{\mathcal{M} - edge(u,v)}
+	\left( 2m^2\,\sum_{x,y: (u,v)\in\Gamma^l_{x,y}}{\frac{\pi(x)\cdot\pi(y)}{min\,\{\pi(u), \pi(v)\}}} 
+	\right)\\
+	&\text{(per il Lemma 5.4 e }w(U)w(T) \geq \mu^{-4}w(I)w(F)\text{)}\\
+	&\leq \max_{\mathcal{M} - edge \textbf{e}}
+	\left(2m^2\,\sum_{x,y: \textbf{e}\in\Gamma^l_{x,y}}{\mu^{-4}w(I)w(F)\pi(\eta_{T \rightarrow T^\prime}(I, F))}
+	\right)\\
+	&\leq \max_{\mathcal{M} - edge \textbf{e}}
+	\left(2m^2\mu^{-4}w(I)w(F)\,\sum_{x,y: \textbf{e}\in\Gamma^l_{x,y}}{\pi(\eta_{T \rightarrow T^\prime}(I, F))}
+	\right)\\
+	&\text{(per il Lemma 5.3)}\leq 2m^2\mu^{-4}w(I)w(F).\qed\\
+\end{align*}

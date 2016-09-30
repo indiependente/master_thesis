@@ -1,4 +1,6 @@
-In questo capitolo si descrive la \textit{Logit dynamics}, introdotta per la prima volta da Blume in \cite{blume1993statistical}. Si evidenziano le sue proprietà e le sue motivazioni. Maggiori dettagli in \cite{ferraioli2012logit}.
+I sistemi complessi sono spesso influenzati da fattori ambientali che possono influire sul modo con cui un giocatore sceglie la propria strategia; inoltre, i giocatori possono avere capacità computazionali limitate, ciò rappresenta il principale limite soprattutto in sistemi informatici e sociali, e conoscenze limitate circa i fattori esterni che possono influenzare il gioco.\\
+Pertanto, c’è bisogno di definire dinamiche che siano capaci di modellare la \textit{bounded rationality} (conoscenza limitata), in cui i giocatori possano prendere decisioni sbagliate, e che portino auspicabilmente il sistema a raggiungere un \textit{equilibrio} che esista sempre, sia unico e velocemente raggiungibile.\\
+La \textit{Logit dynamics} di cui si discute nel corrente Capitolo, introdotta da Blume \cite{blume1993statistical}, modella le dinamiche di questo tipo. Per maggiori dettagli sulle motivazioni che supportano la scelta della \textit{Logit dynamics} fare riferimento alla sezione \ref{sec:motiv}.
 \section{Definizione}
 Si consideri un gioco strategico $\mathcal{G} = ([n], S_1, \dots, S_n, u_1, \dots, u_n)$, in cui $[n] = {1, \dots, n}$ è un insieme finito di giocatori, $S_i$ è l'insieme finito di strategie per il giocatore $i, S = S_1 \times \cdots \times S_n$ è l'insieme dei profili di strategie ed $u_i: S \rightarrow \mathcal{R}$ è la funzione utilità del giocatore $i \in [n]$.\\
 La \textit{Logit dynamics} per un gioco $\mathcal{G}$ procede come segue, ad ogni step:
@@ -50,8 +52,8 @@ e, ricorsivamente
 \end{equation}
 dove l'ultima disuguaglianza deriva da \ref{ergmc}.
 
-\subsection{Logit dynamics e Glauber dynamics}
-In un \textit{potential game}, la \textit{Logit dynamics} è equivalente alla ben nota \textit{Glauber dynamics}.\\
+\subsection{Logit dynamics e Glauber dynamics}\label{ssec:logitglauber}
+In un \textit{potential game}, la \textit{Logit dynamics} è equivalente alla ben nota \textit{Glauber dynamics} \cite{martinelli1999lectures}.\\
 Sia $S = S_1 \times \cdots S_n$ uno spazio degli stati e sia $\mu$ una distribuzione di probabilità su $S$, allora la \textit{Glauber dynamics} per $\mu$ procede come segue:\\
 da un profilo $x \in S$ si sceglie un giocatore $i \in [n]$ in maniera casuale e si modifica la sua strategia in $y \in S_i$ con probabilità $\mu$ condizionata dagli altri giocatori che sono in $x_{-i}$
 \begin{equation}
@@ -59,7 +61,7 @@ da un profilo $x \in S$ si sceglie un giocatore $i \in [n]$ in maniera casuale e
 \end{equation}
 È facile vedere come la catena di Markov definita dalla \textit{Glauber dynamics} sia irriducibile, aperiodica e reversibile, con distribuzione stazionaria $\mu$. Quando $\mathcal{G}=([n], \mathcal{S}, \mathcal{U})$ è un \textit{potential game} con funzione potenziale $\Phi$, la \textit{Logit dynamics} definisce la stessa catena di Markov che la \textit{Glauber dynamics} definisce per la \textit{Gibbs distribution} $\pi$ in \ref{gibbsm}.
 In accordo a quanto appena detto, la \textit{Logit dynamics} per un \textit{potential game} e la \textit{Glauber dynamics} per la \textit{Gibbs distribution} sono due modi di guardare la stessa catena di Markov. Grazie a tale analogia, ci si può riferire alla terminologia utilizzata dai fisici per indicare le quantità coinvolte, in particolare, il parametro $\beta$ è detto \textit{inverse temperature} ed il fattore di normalizzazione $Z$ della \textit{Gibbs distribution} \ref{gibbsm} è detto \textit{partition function}.
-\section{Movitazioni}
+\section{Movitazioni}\label{sec:motiv}
 Nel lavoro introduttivo alla \textit{Logit dynamics} \cite{blume1993statistical}, Blume sottolinea che essa evidenzia due concetti chiave del comportamento strategico: \textit{lock-in} e \textit{bounded rationality}.\\
 La prima proprietà stabilisce che, una volta che un giocatore effettua una scelta, si lega ad essa per qualche tempo: assumendo che tale regola valga nella realtà, giustifica una regola per la scelta di una strategia che tiene conto solamente delle strategie attualmente giocate dagli altri partecipanti e non le strategie che sono state precedentemente scelte. Questo è esattamente ciò che la \textit{Logit update rule} fa in \ref{sigmai}.\\
 La seconda proprietà interviene nella dinamica in due modi: nel comportamento \textit{miopico} dei giocatori che considerano solo il guadagno attuale e non una prospettiva di guadagni futuri e l'\textit{informazione limitata} che tali giocatori hanno. È evidente che la \textit{Logit update rule} in \ref{sigmai} considera tali aspetti. Inoltre, poiché la dinamica descrive una catena di Markov, l'evoluzione del sistema viene trattata in maniera chiara e semplice, permettendo analisi avanzate attraverso gli strumenti forniti dalla teoria dei processi markoviani (alcuni descritti in \ref{sec:markovproc}). Non essendoci restrizioni circa la struttura dei giochi o la loro funzione utilità, tali dinamiche possono essere applicate ad ogni sistema di interesse.\\

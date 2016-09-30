@@ -1,11 +1,9 @@
 \section{Teoria dei Grafi}
-La teoria dei grafi è una branca della matematica, nata nel 1700 con Eulero, che consente di descrivere le relazioni che intercorrono tra un insieme di oggetti.\\
-Il grafo è lo strumento attraverso il quale tali relazioni possono essere espresse ed organizzate. Infatti, il grafo, consiste di oggetti chiamati \textit{nodi} e relazioni tra coppie di questi oggetti detti \textit{archi}; nodi connessi tra loro da un arco sono detti \textit{vicini} o \textit{adiacenti}.\\
-
+La teoria dei grafi è una branca della matematica, nata nel 1700 con Eulero, che consente di descrivere le relazioni che intercorrono tra un insieme di oggetti. Il grafo è lo strumento attraverso il quale tali relazioni possono essere espresse ed organizzate. Infatti, il grafo, consiste di oggetti chiamati \textit{nodi} e relazioni tra coppie di questi oggetti detti \textit{archi}; nodi connessi tra loro da un arco sono detti \textit{vicini} o \textit{adiacenti}.\\
 \begin{figure}[h!]
 	\centering
-	\includegraphics[scale=.5]{img/Wikipedia_multilingual_network_graph_July_2013.png}
-	\caption{Wikipedia Multilingual Network Graph (July 2013)}
+	\includegraphics[scale=.3]{img/zkc.png}
+	\caption{Grafo dello Zachary Karate Club.}
 \end{figure}
 \newpage
 La relazione tra una coppia di nodi può essere di due tipi:
@@ -75,6 +73,37 @@ In un grafo diretto, si distinguono due tipi di grado:
 \paragraph{Cammino.} Un cammino è una sequenza di nodi, in cui ogni coppia consecutiva della sequenza sia connessa da un arco. Formalmente, un cammino è una sequenza di vertici $v_0, v_1, \cdots, v_n \in V$ tale che $\lbrace v_{i-1}, v_i\rbrace \in E, \forall 1\leq i \leq n$. Un cammino con almeno tre vertici distinti, i cui vertici di inizio e fine coincidono, è detto \textit{ciclo}.
 \paragraph{Grafo connesso.} Un grafo è connesso se, per ogni coppia distinta di vertici (i, j), esiste un cammino da i a j.
 
+\subsection{Reti Sociali}
+Una rete sociale è un costrutto teorico proveniente dalle scienze sociali, utilizzata per studiare le relazioni fra individui, gruppi, organizzazioni ed intere società. Il termine rete sociale viene utilizzato per descrivere una struttura sociale determinata dalle interazione tra gli attori che la compongono\cite{scott}.
+Tali reti sono quindi strutture relazionali tra attori ed in quanto tali costituiscono una forma sociale rilevante che definisce il contesto in cui si muovono quegli stessi attori. Una rete sociale risulta essere allora la struttura di relazioni, le cui caratteristiche potessero essere usate per spiegare, in tutto o in parte, il comportamento delle persone che la costituiscono. Elementi costitutivi della rete sociale sono dunque: 
+\begin{itemize}
+	\item I soggetti, che rappresentano le unità, i nodi che compongono la rete (individui, gruppi, posizioni, luoghi, etc.); 
+	\item Le relazioni che legano i soggetti, che compongono la rete e che possiedono determinate caratteristiche.
+\end{itemize}
+Con riferimento al contenuto della relazione è possibile cogliere ed individuare alcune particolari reti che, per il tipo di legami che le costituiscono, si caratterizzano per essere reti di sostegno (supporto sociale):
+\begin{itemize}
+	\item \emph{Formali}, costituite dalle istituzioni sociali;
+	\item \emph{Informali}, che non presentano una veste istituzionalmente definita;
+	\item \emph{Primarie}, costituite da quelle relazioni, che in virtù dei legami naturali, accomunano gli individui, come rapporti familiari, parentali, di vicinato;
+	\item \emph{Secondarie}, formate da relazioni di conoscenza indiretta;
+	\item \emph{Complesse}, composte da un elevato numero di relazioni con caratteristiche specifiche.
+\end{itemize}
+Nell'ambito delle scienze sociali, il concetto di rete sociale è stato utilizzato a lungo come ``metafora'' per tradurre quelle che sono le idee di società e d'azione sociale, come esito di vincoli ed opportunità emergenti dalle relazioni tra i soggetti. L’uso metaforico del termine ha posto il concetto di rete sociale ad un livello di astrazione piuttosto elevato, creando confusione terminologica e mancanza di chiarezza. Successivamente, mediante l'impiego scientifico del termine, tale livello di astrazione è diminuito, determinando il passaggio del concetto di rete dall'immagine intuitiva di un fenomeno complesso alla sua rappresentazione sul piano formale ed analitico. Ciò ha portato le reti sociali, come rappresentazione organizzativa dei rapporti sociali ed il suo metodo di studio, \textbf{l’analisi delle reti sociali}, ad essere adottate come strumenti teorici e metodologici per lo studio di numerosi fenomeni e processi. In ambito sociologico, tali studi hanno mostrato che nelle reti si depositano valori materiali, ma soprattutto non materiali che contribuiscono a determinare la ``ricchezza'' individuale e collettiva (diversa da individuo ad individuo, non solo grazie alle capacità relazionali, ma anche per effetto di specifici processi strutturali)\cite{pisa}.
+Quindi, \textit{l'analisi delle reti sociali} comprende principalmente tutta la parte teorica ed i modelli utilizzati per lo studio delle reti sociali in generale. Un esempio reale di una fitta rete sociale è quello mostrato in Figura \ref{fig:hp}. Di seguito, dopo alcuni cenni storici si passa alla descrizione di concetti e strumenti derivanti dalla \emph{teoria dei grafi} che è alla base della \textit{Social Network Analysis}.
+\begin{figure}[ht]
+	\centering \shadowbox{
+		\includegraphics[scale=0.5]{img/hp.png}}
+	\caption{Scambio di e-mail tra i 436 impiegati di HP Research Lab}
+	\label{fig:hp}
+\end{figure}
+
+\subsection{Cenni storici}
+L'idea delle reti sociali nacque verso la fine del 1900, grazie alle teorie e le ricerche su gruppi sociali di \textit{\`Emile Durkheim} e \textit{Ferdinand T\"{o}nnies}. Quest'ultimo sosteneva che i gruppi sociali possono esistere come legami personali e diretti, i quali collegano gli individui che condividono valori e credenze (\emph{community}), oppure impersonali e formali (\emph{società})\cite{tonnies}. Durkheim fornì una spiegazione non individualistica dei fenomeni sociali, affermando che essi sorgono quando gli individui interagiscono costituendo una realtà che non può più essere rappresentata, in termini di proprietà dei singoli\cite{durkheim}.
+\\
+Inoltre intorno al ventesimo secolo, \emph{Georg Simmel} si concentrò sulla natura delle reti e su quanto le dimensioni delle reti influenzassero le interazioni tra le componenti della rete, esaminandone le probabilità di interazione in reti debolmente collegate, piuttosto che in gruppi\cite{simmel}.
+\\
+Importanti sviluppi nel campo possono essere riscontrati intorno al 1930, grazie a differenti ed indipendenti gruppi di psicologi, antropologi e matematici. In psicologia, \emph{Jacob L. Moreno} iniziò una registrazione ed un'analisi sistematica delle interazioni sociali all'interno di piccoli gruppi. Per quanto riguarda l'antropologia, la fondazione della teoria delle reti sociali è dovuta ai lavori teorici ed entrografici di \emph{Bronislaw Malinowski}\cite{bronislaw}, \emph{Alfred Radcliffe-Brown}\cite{brown1, brown2}, e \emph{Claude Lévi-Strauss}\cite{strauss}, gruppo di antropologi sociali a cui vengono attribuiti i primi lavori di analisi di rete, investigando le community nel sud Africa, India e Regno Unito. In concomitanza a tale gruppo, l'antropologo inglese \emph{S.F. Nadel} codificò una teoria riguardante le strutture sociali che influenzò l'analisi delle reti\cite{nadel}. Nel campo della sociologia, nei primi anni del 1930 \emph{Talcott Parsons} preparò il terreno per l'adozione di un approccio relazionale per comprendere le struttura sociali \cite{parsons1, parsons2}. Successivamente, attingendo dalle teorie di Parsons, il lavoro del sociologo \emph{Peter Blau} sulla teoria dello scambio sociale fornì un forte impatto per l'analisi dei legami relazionali\cite{blau1,blau2,blau3}. A partire dal 1970, un numero crescente di studiosi lavorò per combinare le differenti tracce e tradizioni, fra cui un gruppo composto dal sociologo \emph{Harrison White} ed i suoi studenti del dipartimento di scienze sociale dell'università di Harvard. Ed in maniera indipendente, \emph{Charles Tilly} si concentrò sulle relazioni fra le dinamiche politiche e sociali, e \emph{Stanley Milgram} sviluppò la tesi sui sei gradi di separazione\cite{bernie}. In seguito, \emph{Mark Granovetter}\cite{grano} e \emph{Barry Wellman}\cite{wellman} furono fra i primi studenti di White ad elaborare e sostenere l'analisi delle reti sociali\cite{mullins, tillyc, wellman2}.
+
 \subsection{Grafo come modello della realtà}
 I grafi hanno una grande utilità, in quanto consentono di astrarre le relazioni che intercorrono tra più oggetti, e di rappresentare tali relazioni in strutture su cui è possibile applicare modelli matematici. In \cite{easley2010networks} viene proposto un esempio reale: la Figura \ref{arpanet} rappresenta la struttura della rete Internet nel Dicembre del 1970, noto come ARPANET allora, composto solo da 13 macchine. I nodi rappresentano gli host, e vi è un arco tra due host se esiste una comunicazione diretta tra di essi.
 \begin{figure}[h!]
@@ -86,7 +115,7 @@ I grafi hanno una grande utilità, in quanto consentono di astrarre le relazioni
 Come è possibile intuire, la posizione geografica dei nodi non ha molta importanza, ma quel che conta è il come ogni nodo sia connesso agli altri. Infatti la figura \ref{arpanet_graph} mostra lo stesso grafo di ARPANET, attraverso una rappresentazione logica.
 \begin{figure}
 	\centering
-	\includegraphics[scale=.5]{img/arpanetdec1970_graph.png}
+	\includegraphics[scale=.4]{img/arpanetdec1970_graph.png}
 	\caption{Grafo di ARPANET nel Dicembre 1970}
 	\label{arpanet_graph}
 \end{figure}
@@ -99,7 +128,7 @@ Quindi, come si evince dai vari tipi di network descritte finora, i grafi sono u
 Lo scopo finale per cui nasce la fisica statistica, in particolare la meccanica statistica, è quello di fornire strutture e strumenti per mettere in relazione proprietà microscopiche di atomi e molecole individuali rispetto a proprietà del materiale che possono essere osservate ad occhio nudo. Spiegando ad esempio la termodinamica come il risultato naturale di statistica, meccanica classica e meccanica quantistica al livello microscopico: il grafo riesce a modellare le particelle del sistema su cui agisce la dinamica del processo fisico.
 
 
-\section{Modello di Ising}
+\section{Modello di Ising}\label{sec:ising}
 Il modello di Ising è un classico problema combinatoriale della fisica statistica, studiato per la prima volta da Ernest Ising nel 1920. Tale modello è interessato alla fisica delle transizioni di fase, che occorrono quando un piccolo cambiamento nei parametri, come temperatura o pressione, causa un grande cambiamento qualitativo nello stato del sistema. Le transizioni di fase sono comuni nella fisica, come ad esempio nel fenomeno del ferromagnetismo.\\
 Uno degli scopi principali del modello di Ising è spiegare come interazioni di breve raggio tra le componenti del sistema siano in grado di dare luogo a comportamenti correlati di lungo raggio e, quindi, di predire in un certo senso il potenziale per una transizione di fase. Tale modello trova applicazione in molti ambiti, in generale in tutti quegli ambiti dove si studia il comportamento cooperativo di grandi sistemi: tali applicazioni sono possibili perché il modello di Ising può essere formulato come un problema matematico.\\
 Una semplice definizione matematica del modello di Ising è data in \cite{cipra1987introduction} e in \cite{jerrum1993polynomial}: consideriamo una collezione di siti $\lbrack n \rbrack = \lbrace 0, 1, \cdots, n-1 \rbrace$, in cui ogni coppia $i, j$ ha associata un’energia di interazione $V_{ij}$. Nella maggior parte dei casi di interesse fisico, l’insieme E di coppie con energia di interazione non nulla forma un \textit{regular lattice graph} $([n], E)$: detto anche \textit{mesh graph} o \textit{grid graph}, è un grafo la cui rappresentazione grafica sul piano forma delle tassellature regolari.\\
@@ -158,7 +187,7 @@ Alcune importanti proprietà della varianza:
 	\item Sia \textit{X} una variabile casuale e $c$ una costante, allora $V(cX) = c^2V(X)$
 	\item Siano $X$ ed $Y$ due variabili casuali indipendenti, allora $V(X+Y) = V(X) + V(Y)$.
 \end{itemize}
-\paragraph{Disuguaglianza di Chebyshev.} Sia \textit{X} una variabile casuale con valore atteso finito $\mu$ e varianza non negativa finita $\sigma^2$. Allora per qualsiasi numeri reale $k > 0$ si ha che
+\paragraph{Disuguaglianza di Chebyshev.} \label{chebyshev} Sia \textit{X} una variabile casuale con valore atteso finito $\mu$ e varianza non negativa finita $\sigma^2$. Allora per qualsiasi numeri reale $k > 0$ si ha che
 \begin{equation}
 	Pr(|X - \mu| \geq k) \leq \frac{\sigma^2}{k^2}.
 \end{equation}
@@ -178,7 +207,7 @@ Sia $\mathcal{T}(x) := {t \geq 1 : P^{t}(x,x) > 0}$ l'insieme di volte in cui è
 Data una catena irriducibile, il periodo della catena è definito come il periodo che è comune a tutti gli stati. La catena sarà detta \textit{aperiodica} se tutti gli stati hanno periodo 1, altrimenti \textit{periodica}.
 \paragraph{Proposizione.} \textit{Se P è aperiodica ed irriducibile, allora vi è un intero r t.c.} $P^r(x, y) > 0 \forall x, y \in \Omega$.\\
 Una catena di Markov finita (con spazio degli stati $\Omega$ finito), \textit{irriducibile} ed \textit{aperiodica} è detta \textbf{ergodica}.
-\subsection{Distribuzione stazionaria}
+\subsection{Distribuzione stazionaria}\label{ssec:stazdist}
 Sia $\pi$ una distribuzione di probabilità. Se tale distribuzione soddisfa
 \begin{equation}
 	\pi = \pi P
@@ -221,4 +250,4 @@ dati numeri reali non negativi $a, \tilde{a}, \epsilon$, si dice che $\tilde{a}$
 \begin{equation}
 	a(1+\epsilon)^{-1} \leq \tilde{a} \leq a(1+\epsilon).
 \end{equation}
-Sia \textit{f} una qualsiasi funzione che mappa istanze del problema in numeri reali. Un \textit{\textbf{randomised approximation scheme}} per $f$ è un algoritmo probabilistico che, quando presentato con un'istanza $x$ ed un numero reale $\epsilon \in (0,1]$, restituisce un numero che, con alta probabilità, approssima $f(x)$ in un range $(1+\epsilon)$. Il risultato di tale algoritmo, però, non deve essere ottenuto solo con \textit{alta affidabilità}, ma anche \textit{\textbf{efficientemente}}. In accordo a ciò, si definisce un approximation scheme \textit{\textbf{fully polynomial}} se il suo tempo di esecuzione è polinomiale in $\epsilon^{-1}$ e nella taglia dell'istanza $x$ del problema.
+Sia \textit{f} una qualsiasi funzione che mappa istanze del problema in numeri reali. Un \textit{\textbf{randomised approximation scheme}} per $f$ è un algoritmo probabilistico che, quando presentato con un'istanza $x$ ed un numero reale $\epsilon \in (0,1]$, restituisce un numero che, con alta probabilità, approssima $f(x)$ in un range $(1+\epsilon)$. Il risultato di tale algoritmo, però, non deve essere ottenuto solo con \textit{alta affidabilità}, ma anche \textit{efficientemente}. In accordo a ciò, si definisce un approximation scheme \textit{\textbf{fully polynomial}} se il suo tempo di esecuzione è polinomiale in $\epsilon^{-1}$ e nella taglia dell'istanza $x$ del problema.

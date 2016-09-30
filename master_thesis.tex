@@ -9,6 +9,10 @@
 %%\renewcommand{\tableshortname}{Table}
 %%\renewcommand{\figureshortname{Figure}
 %%\chapapp{\chaptername}
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+\newcommand{\CC}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
 \usepackage[italian,english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -41,9 +45,11 @@
 %\usepackage[final,backref,breaklinks,pagebackref,colorlinks]{hyperref}
 %HYPERREF per uso con con pdf (con bookmark)
 %\usepackage[final,bookmarks,backref,breaklinks,dvips,colorlinks]{hyperref}\\
-\usepackage[final,bookmarks,breaklinks,colorlinks]{hyperref}
+\usepackage[final,bookmarks,breaklinks,colorlinks,allcolors=black]{hyperref}
 %mypackages
-\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
 \input{IsisMacro.tex}
 
 \begin{document}
@@ -61,7 +67,7 @@
 {\large Tesi di Laurea Magistrale in}\\[0.2truecm]
 {\Large Informatica}\\
 \vfill\vfill
-{\Huge Titolo}
+{\Huge A more efficient implementation of the subgraphs-world for the Glauber dynamics in the Ising model}
 \vfill\vfill
 
 
@@ -81,8 +87,11 @@ Anno Accademico 2015-2016
 
 \chapter*{Dediche e ringraziamenti}
 \vfill
-
-
+\emph{Ai miei genitori, a mia sorella Giovanna ed alla mia famiglia.}\\\\
+\emph{Ai miei fratelli e colleghi Marco e Daniele.}\\\\
+\emph{A tutti gli amici.}\\\\
+\emph{Al mio relatore Prof. Vincenzo Auletta ed al Dott. Diodato Ferraioli.}\\\\\\\\
+\emph{A te.}
 \vfill
 
 {\hypersetup{linkcolor=black}
@@ -97,30 +106,30 @@ Anno Accademico 2015-2016
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Alcuni concetti base}
+\chapter{Alcuni concetti base}\label{chap1}
 \input{basics.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Logit Dynamics}
+\chapter{Logit Dynamics}\label{chap3}
 \input{logit.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Il lavoro di Jerrum e Sinclair}
+\chapter{Il lavoro di Jerrum e Sinclair}\label{chap4}
 \input{jerrsincl.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Miglioramenti apportati}
+\chapter{Partition Function}\label{chap5}
 \input{improve.tex}
 
-\chapter{Mean Magnetic Moment}
+\chapter{Mean Magnetic Moment}\label{chap6}
 \input{mmm.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Implementazione e testing}
+\chapter{Implementazione e testing}\label{chap7}
 \input{impl.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Conclusioni e sviluppi futuri}
+\chapter{Conclusioni e sviluppi futuri}\label{chap8}
 \input{conclusions.tex}
 
 
